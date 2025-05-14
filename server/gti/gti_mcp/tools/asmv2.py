@@ -75,7 +75,7 @@ async def get_asm_issue_details(id: str, ctx: Context) -> typing.Dict[str, typin
 
 @server.tool()
 async def search_asm_issues(
-    query: str, ctx: Context, limit: int = 10, cursor: typing.Optional[str] = None
+    query: str, ctx: Context, limit: int = 100, cursor: typing.Optional[str] = None
 ) -> typing.Dict[str, typing.Any]:
     """
     Searches for Attack Surface Management (ASM) issues in Google Threat Intelligence
