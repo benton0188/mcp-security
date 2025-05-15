@@ -142,6 +142,11 @@ Threats like actors, malware, campaigns, reports, and vulnerabilities are modele
   - `redirecting_urls`: URLs that redirect to this URL
   - `redirected_urls`: URLs that this URL redirects to
 
+### Attack Surface Management (ASM)
+
+- **`get_asm_issue_details(id)`**: Retrieves detailed information for a specific Attack Surface Management (ASM) issue using its unique ID. ASM issues highlight potential risks, misconfigurations, or vulnerabilities detected on monitored assets. Example ID format: `asm_issue_5a7b....c9d0`.
+
+- **`search_asm_issues(query, limit=10, cursor=None)`**: Searches for ASM issues in Google Threat Intelligence (VirusTotal) based on a flexible query string. Supports various search keywords such as `collection:name`, `severity_gte:4`, `last_seen_after:YYYY-MM-DD`, and more. Pagination is supported using the `cursor` argument, and the function returns up to 1,000 results per call.
 ## Query Syntax Examples
 
 GTI tools that accept a query parameter use specific syntax:
