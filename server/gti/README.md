@@ -54,6 +54,12 @@ Threat Intelligence suite.
 - **`get_threat_profile_recommendations(profile_id)`**: Returns the list of objects associated to the given Threat Profile.
 - **`get_threat_profile_associations_timeline(profile_id)`**: Retrieves the associations timeline for the given Threat Profile.
 
+### Attack Surface Management (ASM)
+
+- **`get_asm_issue_details(id)`**: Retrieves detailed information for a specific Attack Surface Management (ASM) issue using its unique ID. ASM issues highlight potential risks, misconfigurations, or vulnerabilities detected on monitored assets. Example ID format: `asm_issue_5a7b....c9d0`.
+
+- **`search_asm_issues(query, limit=10, cursor=None)`**: Searches for ASM issues in Google Threat Intelligence (VirusTotal) based on a flexible query string. Supports various search keywords such as `collection:name`, `severity_gte:4`, `last_seen_after:YYYY-MM-DD`, and more. Pagination is supported using the `cursor` argument, and the function returns up to 1,000 results per call.
+
 ## Configuration
 
 ### MCP Server Configuration
