@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoC Analysis Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a; /* Darker Blue */
+            --secondary-color: #6366f1; /* Medium Blue */
+            --accent-color: #f59e0b; /* Orange/Amber */
+            --background-light: #f8fafc; /* Off-white light background */
+            --background-card: #ffffff;
+            --text-color: #374151; /* Dark gray for body text */
+            --heading-color: #1f2937; /* Even darker gray for headings */
+            --code-bg: #edf2f7; /* Light gray-blue for code blocks */
+            --border-color: #e5e7eb; /* Light border color */
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.12);
+            --shadow-hover: rgba(0, 0, 0, 0.20);
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+            line-height: 1.8;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            padding: 30px;
+            font-weight: 400;
+            font-size: 16px;
+        }
+
+        .container {
+            background-color: var(--background-card);
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            max-width: 1200px;
+            margin: 30px auto;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--heading-color);
+            text-align: center;
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 50px;
+            font-weight: 700;
+            font-size: 3em;
+            letter-spacing: -1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 50px;
+            border-bottom: 1px solid var(--secondary-color);
+            padding-bottom: 12px;
+            font-weight: 700;
+            font-size: 2.2em;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            color: var(--heading-color);
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.5em;
+        }
+        
+        h4 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.2em;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 0;
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        li {
+            background-color: var(--background-light);
+            padding: 15px 25px;
+            border-left: 6px solid var(--secondary-color);
+            margin-bottom: 12px;
+            border-radius: 8px;
+            word-break: break-word;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.2s ease-in-out;
+        }
+
+        li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        li strong {
+            color: var(--primary-color);
+            font-weight: 700;
+            min-width: 150px;
+            flex-shrink: 0;
+            margin-right: 20px;
+        }
+        
+        .nested-list {
+            padding-left: 0;
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .nested-list li {
+            background-color: transparent;
+            border-left: none;
+            box-shadow: none;
+            padding: 5px 0;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            color: #3f51b5;
+        }
+
+        .ioc-section {
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 45px;
+            border-radius: 12px;
+            background-color: var(--background-card);
+            box-shadow: 0 5px 20px var(--shadow-light);
+            transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+
+        .ioc-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px var(--shadow-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IoC Analysis Report</h1>
+
+        <div class="ioc-section">
+            <h2>IoC 1</h2>
+            <ul>
+                <li><strong>Value:</strong> 71826ba081e303866ce2a2534491a2f7</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> Mandiant Active Breach Intelligence</li>
+            </ul>
+
+            <h3>SecOps Entity Summary</h3>
+            <ul>
+                <li><strong>Entity Type:</strong> FILE</li>
+                <li><strong>First Seen:</strong> 2024-08-09 13:02:19+00:00</li>
+                <li><strong>Last Seen:</strong> 2025-05-08 16:46:12+00:00</li>
+                <li><strong>Total Events:</strong> 0</li>
+                <li><strong>Total Alerts:</strong> 0</li>
+                <li><strong>Prevalence Information:</strong> Available</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> tkraw_Protected99.exe</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (GUI) Intel 80386, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows GUI</li>
+                <li><strong>Type Extension:</strong> exe</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered trojan. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> trojan</li>
+                <li><strong>Popular Threat Name:</strong> autoit (Count: 16)</li>
+                <li><strong>Suggested Threat Label:</strong> trojan.autoit/gen8</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 58</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 15</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> -42</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Win64 Executable (generic):</strong> 32.2% probability</li>
+                <li><strong>Win32 Dynamic Link Library (generic):</strong> 20.1% probability</li>
+                <li><strong>Win16 NE executable (generic):</strong> 15.4% probability</li>
+                <li><strong>Win32 Executable (generic):</strong> 13.7% probability</li>
+                <li><strong>OS/2 Executable (generic):</strong> 6.2% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 71826ba081e303866ce2a2534491a2f7</li>
+                <li><strong>SHA1:</strong> b482d64a43f6bfbf758166ecba680b7f0c59a4f7</li>
+                <li><strong>SHA256:</strong> 62099532750dad1054b127689680c38590033fa0bdfa4fb40c7b4dcb2607fb11</li>
+                <li><strong>TLSH:</strong> T12695C0C6A3A980E2FE0677F79E1577C74B785A314532401D23AD3D59AE730F2412EAA3</li>
+                <li><strong>Vhash:</strong> 026056655d15156210b02002300a46z161d013zf2za0030e039z</li>
+                <li><strong>SSDeep:</strong> 24576:EAHnh+eWsN3skA4RV1Hom2KXMmHa/F9OdaxwwHeIbiZLpFC1XJLc/r7/vRP0r2dU:Th+ZkldoPK8Ya/6U</li>
+                <li><strong>Authentihash:</strong> 1d50140145e3511ec4d3ea0cdffee93f66ffac580f86547749091441cd03bdf6</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> e39a8ce8a842c33746b4905a89f847fe</li>
+                <li><strong>Filecondis Dhash:</strong> 203c3d1d1e1f0d14</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1554871420 (Apr 10 2019 08:43:40 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> afcdf79be1557326c854b6e20cb900a7</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 163850</li>
+                <li><strong>Resource Languages:</strong> NEUTRAL (3), ENGLISH UK (24)</li>
+                <li><strong>Resource Types:</strong> RT_MANIFEST (1), RT_ICON (11), RT_FONT (2), RT_STRING (7), RT_MENU (1), RT_RCDATA (1), RT_GROUP_ICON (4)</li>
+                <li><strong>Compiler Product Versions:</strong> [ASM] VS2013 build 21005 count=51</li>
+                <li><strong>Rich PE Header Hash:</strong> a5d888b5a108c327d65f490cc1a712f2</li>
+                <li><strong>Debug Type:</strong> IMAGE_DEBUG_TYPE_RESERVED10 (Timestamp: Thu Mar 15 13:14:39 2018)</li>
+                <li><strong>Imported Functions (WSOCK32.dll):</strong> __WSAFDIsSet, accept</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Network Infrastructure:</strong> http://pomf.cat/upload.php</li>
+                <li><strong>Autostart Locations:</strong> cmd.exe</li>
+                <li><strong>Tags:</strong> checks-network-adapters, calls-wmi</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects executables containing SQL queries to confidential data stores. Observed in infostealers.</li>
+                <li><strong>Sandbox Verdicts (Zenbox):</strong> Malicious (MALWARE, STEALER - HawkEye)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1554871420</li>
+                <li><strong>Last Modification Date:</strong> 1746793801</li>
+                <li><strong>Times Submitted:</strong> 1366</li>
+                <li><strong>First Submission Date:</strong> 1554877771</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1674233493</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1703663204</li>
+                <li><strong>Unique Sources:</strong> 965</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 2</h2>
+            <ul>
+                <li><strong>Value:</strong> e323c6aee8b172b57203a7e478c1caca</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> Mandiant Active Breach Intelligence</li>
+            </ul>
+
+            <h3>SecOps Entity Summary</h3>
+            <ul>
+                <li><strong>Entity Type:</strong> FILE</li>
+                <li><strong>First Seen:</strong> 2024-08-09 13:00:36+00:00</li>
+                <li><strong>Last Seen:</strong> 2025-05-08 16:44:29+00:00</li>
+                <li><strong>Associated Alerts:</strong>
+                    <ul class="nested-list">
+                        <li>Rule: ATI High Priority Rule Match for File IoCs (target.process.parent.process.file.sha256) [High Priority Host Indicators], Count: 1</li>
+                        <li>Rule: ATI High Priority Rule Match for File IoCs (principal.process.file.sha256) [High Priority Host Indicators], Count: 1</li>
+                        <li>Rule: ATI High Priority Rule Match for File IoCs (target.file.sha256) [High Priority Host Indicators], Count: 1</li>
+                    </ul>
+                </li>
+                <li><strong>Total Events:</strong> 0</li>
+                <li><strong>Total Alerts:</strong> 3</li>
+                <li><strong>Prevalence Information:</strong> Available</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> .data</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (GUI) Intel 80386, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows GUI</li>
+                <li><strong>Type Extension:</strong> exe</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered ransomware. Other contributing factors were that it has known exploits and it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> ransomware</li>
+                <li><strong>Popular Threat Name:</strong> conti (Count: 26)</li>
+                <li><strong>Suggested Threat Label:</strong> ransomware.conti/encoder</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 62</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 11</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> -1</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Win32 Dynamic Link Library (generic):</strong> 27.1% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> e323c6aee8b172b57203a7e478c1caca</li>
+                <li><strong>SHA1:</strong> 61488490142f1602a542d6e0b6bf6d8ae0156c79</li>
+                <li><strong>SHA256:</strong> 227164b06f201b07a8b82800adcc6a831cadaed6709d1473fd4182858fbd80a5</li>
+                <li><strong>TLSH:</strong> T176A38245630D1BEDF69EA4B5A6A93C3365CA983C039F85FBFBC684451542BC220B4F93</li>
+                <li><strong>Vhash:</strong> 015056551d15555bz9hz101jz</li>
+                <li><strong>SSDeep:</strong> 1536:YzkzMy2546PtngS719+T0gdGpwW2XtaJp7fd8OUfB4VH9qNwpWblz:RX2C29+4g8wW2XtO7l8OUGx9qNwp6</li>
+                <li><strong>Authentihash:</strong> 93faded74d2d5ada67d0d92f7ab9214324ae115bf39a5af37a9b35718952e054</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> 2e2c3ec5057aad7d1da5b5ddb9dbada4</li>
+                <li><strong>Filecondis Dhash:</strong> f8eeec9ccc488482</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1591228930 (Jun 04 2020 00:02:10 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> 30fe3f044289487cddc09bfb16ee1fde</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 21328</li>
+                <li><strong>Resource Languages:</strong> RUSSIAN (2), NEUTRAL (2), ENGLISH US (1)</li>
+                <li><strong>Resource Types:</strong> RT_RCDATA (4), RT_MANIFEST (1)</li>
+                <li><strong>Compiler Product Versions:</strong> [---] Unmarked objects count=17</li>
+                <li><strong>Rich PE Header Hash:</strong> be81a9a69e4d2177781ef0cfa9b71b09</li>
+                <li><strong>Debug Type:</strong> IMAGE_DEBUG_TYPE_POGO (Timestamp: Thu Jun 04 00:02:10 2020)</li>
+                <li><strong>Imported Functions (SHLWAPI.dll):</strong> StrStrIA</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Tags:</strong> direct-cpu-clock-access, peexe</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Conti ransomware is having capability to scan and encrypt over the network.</li>
+                <li><strong>Sigma Analysis Results (High Severity):</strong> Potential Ryuk Ransomware Activity.</li>
+                <li><strong>Sandbox Verdicts (C2AE):</strong> Undetected (UNKNOWN_VERDICT)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1591228930</li>
+                <li><strong>Last Modification Date:</strong> 1745775351</li>
+                <li><strong>Times Submitted:</strong> 1</li>
+                <li><strong>First Submission Date:</strong> 1612194499</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1640774211</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1666808966</li>
+                <li><strong>Unique Sources:</strong> 1</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 3</h2>
+            <ul>
+                <li><strong>Value:</strong> 8ebb0003c81bd56aa231c7ccc01073b7</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> Mandiant Active Breach Intelligence</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> DiskUtil-win-x64-installer.exe</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (console) Intel 80386 Mono/.Net assembly, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows command line</li>
+                <li><strong>Type Extension:</strong> exe</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> MEDIUM</li>
+                <li><strong>Threat Severity Description:</strong> Severity MEDIUM because it was considered trojan.</li>
+                <li><strong>Popular Threat Category:</strong> trojan</li>
+                <li><strong>Popular Threat Name:</strong> gruntstager (Count: 11)</li>
+                <li><strong>Suggested Threat Label:</strong> trojan.gruntstager/msil</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 50</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 21</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> 0</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Generic CIL Executable (.NET, Mono, etc.):</strong> 71.1% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 8ebb0003c81bd56aa231c7ccc01073b7</li>
+                <li><strong>SHA1:</strong> fe3de07a11f4e80da44f67a744ccc2e814ae7df9</li>
+                <li><strong>SHA256:</strong> a9ab5725d4e96e39f5001b4982b1c81f868a081f25e603832709d7449ee946c9</li>
+                <li><strong>TLSH:</strong> T18F32E71E76D8CA96D17E9A7C2CE2915841B3D64E4011EDDB2ECAA48F2B73BC04512FC5</li>
+                <li><strong>Vhash:</strong> 214026551e1z11a0025</li>
+                <li><strong>SSDeep:</strong> 192:h0ewdRVCxDqBV/EGXstLXaxbsQHms2Z0LrfEWiaslS6mxk/4:h0eca8RstLXaxbsah2aHiWDxkA</li>
+                <li><strong>Authentihash:</strong> 2b2167cee2eb00b6ae52fa90d14014f1adc816b9eb523984748b3dbb55f3cab3</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> 1d069d398035b0544307378f853b04af</li>
+                <li><strong>Filecondis Dhash:</strong> f8f8fc9e9c892000</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1687358853 (Jun 21 2023 08:07:33 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> f34d5f2d4577ed6d9ceec516c1f5a744</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 18310</li>
+                <li><strong>Sections (.text):</strong> Virtual Address: 8192, Entropy: 5.56, Raw Size: 10240, Flags: rx, MD5: 706850755c4501ab10057bcbb079de5d</li>
+                <li><strong>Imported Functions (mscoree.dll):</strong> _CorExeMain</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Network Infrastructure:</strong> http://34.152.40.90</li>
+                <li><strong>Tags:</strong> peexe, detect-debug-environment</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects Covenant Grunt Stager.</li>
+                <li><strong>Sigma Analysis Results (High Severity):</strong> System File Execution Location Anomaly (Detects a Windows program executable started from a suspicious folder).</li>
+                <li><strong>Malware Configuration (Grunt Family):</strong> C2 connection to http://34.152.40.90/en-us/index.html.</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1687358853</li>
+                <li><strong>Last Modification Date:</strong> 1741860707</li>
+                <li><strong>Times Submitted:</strong> 1</li>
+                <li><strong>First Submission Date:</strong> 1701443578</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1701467277</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1701467609</li>
+                <li><strong>Unique Sources:</strong> 1</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 4</h2>
+            <ul>
+                <li><strong>Value:</strong> 21cffaa7f9bf224ce75e264bfb16dd0d</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> Mandiant Active Breach Intelligence</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> Sample\20231016_VT\a605570555620cea6d6be211520525fc95a30961661780da4cc4bafe9864f394</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (GUI) Intel 80386, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows GUI</li>
+                <li><strong>Type Extension:</strong> exe</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered trojan. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> trojan</li>
+                <li><strong>Popular Threat Name:</strong> nukesped (Count: 10)</li>
+                <li><strong>Suggested Threat Label:</strong> trojan.nukesped/aarhnxii</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 55</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 18</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> 0</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Win32 Executable MS Visual C++ (generic):</strong> 47.3% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 21cffaa7f9bf224ce75e264bfb16dd0d</li>
+                <li><strong>SHA1:</strong> 862abce03f7f5de0c466fdbd24ad796578eaa110</li>
+                <li><strong>SHA256:</strong> a605570555620cea6d6be211520525fc95a30961661780da4cc4bafe9864f394</li>
+                <li><strong>TLSH:</strong> T198B35B00F5D99C34E0B7423A09989A521A7DFD318E716F2BF79849CD1A781E0772DBA3</li>
+                <li><strong>Vhash:</strong> 015056655d55556az439z15z13z15zd7z</li>
+                <li><strong>SSDeep:</strong> 1536:jNJYjBH++jAYcPsu0zhdfwNXlPIoKK+2J4bMvOQOicEADinIbsWjcdVqQJ8x:BJYjBH/r9WNXlPINK+aqyA+nIkVqQJY</li>
+                <li><strong>Authentihash:</strong> 81ba7aab604bc3a7507c7df0e842a16b304a035b4cd4301e3af20ed718c21cb8</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> c38765d341fcc29a8377290dd0b2549f</li>
+                <li><strong>Filecondis Dhash:</strong> fc7c3c3c1c9c0800</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1661562565 (Aug 27 2022 00:00:00 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> ba449be080780d07392dfd50772cc830</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 25045</li>
+                <li><strong>Resource Languages:</strong> ENGLISH US (1)</li>
+                <li><strong>Resource Types:</strong> RT_MANIFEST (1)</li>
+                <li><strong>Compiler Product Versions:</strong> [---] Unmarked objects count=100</li>
+                <li><strong>Rich PE Header Hash:</strong> aea79520acb77fa16b4b43843eed7fc0</li>
+                <li><strong>Imported Functions (WS2_32.dll):</strong> closesocket, connect</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Tags:</strong> spreader, peexe</li>
+                <li><strong>Sigma Analysis Results (Medium Severity):</strong> Process Creation Using Sysnative Folder (Detects process creation events that use the Sysnative folder (common for CobaltStrike spawns)).</li>
+                <li><strong>Sandbox Verdicts (Zenbox):</strong> Harmless (CLEAN)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1661562565</li>
+                <li><strong>Last Modification Date:</strong> 1745598128</li>
+                <li><strong>Times Submitted:</strong> 6</li>
+                <li><strong>First Submission Date:</strong> 1663256873</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1674846275</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1690990572</li>
+                <li><strong>Unique Sources:</strong> 5</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 5</h2>
+            <ul>
+                <li><strong>Value:</strong> 151.101.66.132</li>
+                <li><strong>Type:</strong> destinationIpAddress</li>
+                <li><strong>Sources:</strong> ESET Threat Intelligence</li>
+            </ul>
+
+            <h3>GTI IP Address Report - Attributes</h3>
+            <h4>IP Address Information</h4>
+            <ul>
+                <li><strong>Type:</strong> ip_address</li>
+                <li><strong>Network:</strong> 151.101.0.0/16</li>
+                <li><strong>ASN:</strong> 54113</li>
+                <li><strong>AS Owner:</strong> FASTLY</li>
+                <li><strong>Country:</strong> US</li>
+                <li><strong>Continent:</strong> NA</li>
+                <li><strong>Regional Internet Registry:</strong> ARIN</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> NONE</li>
+                <li><strong>Threat Severity Description:</strong> Severity NONE because it has no detections.</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 0</li>
+                        <li>Suspicious: 1</li>
+                        <li>Undetected: 31</li>
+                        <li>Harmless: 62</li>
+                        <li>Timeout: 0</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 8</li>
+                <li><strong>Reputation:</strong> -2</li>
+            </ul>
+            <h4>Timeline & Last Seen</h4>
+            <ul>
+                <li><strong>Last Modification Date:</strong> 1746801260</li>
+                <li><strong>Last Analysis Date:</strong> 1746800666</li>
+                <li><strong>Whois Date:</strong> 1746241151</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1599365349</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1746752127</li>
+            </ul>
+            <h4>Certificate Information</h4>
+            <ul>
+                <li><strong>Last HTTPS Certificate Date:</strong> 1746800978</li>
+                <li><strong>Certificate Subject:</strong> CN: j.sni-644-default.ssl.fastly.net</li>
+                <li><strong>Certificate Issuer:</strong> C: BE, O: GlobalSign nv-sa, CN: GlobalSign Atlas R3 DV TLS CA 2024 Q4</li>
+                <li><strong>Certificate Validity:</strong> Not Before: 2024-11-14 05:05:17, Not After: 2025-12-16 05:05:16</li>
+                <li><strong>Certificate Public Key Algorithm:</strong> RSA (Key Size: 2048)</li>
+                <li><strong>Certificate Thumbprint SHA256:</strong> a711176e10ec73fb46efa31b2fff221c97a710f0b85bb05f47274ff1f7b349d6</li>
+                <li><strong>JARM Fingerprint:</strong> 29d3fd00029d29d00041d41d00041d6b5eefa2404a56c2ced79a0d16afe36c</li>
+            </ul>
+            <h4>Other Attributes</h4>
+            <ul>
+                <li><strong>Tags:</strong> None</li>
+                <li><strong>Total Votes (Malicious):</strong> 2</li>
+                <li><strong>Total Votes (Harmless):</strong> 0</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 6</h2>
+            <ul>
+                <li><strong>Value:</strong> 151.101.130.132</li>
+                <li><strong>Type:</strong> destinationIpAddress</li>
+                <li><strong>Sources:</strong> ESET Threat Intelligence</li>
+            </ul>
+
+            <h3>GTI IP Address Report - Attributes</h3>
+            <h4>IP Address Information</h4>
+            <ul>
+                <li><strong>Type:</strong> ip_address</li>
+                <li><strong>Network:</strong> 151.101.0.0/16</li>
+                <li><strong>ASN:</strong> 54113</li>
+                <li><strong>AS Owner:</strong> FASTLY</li>
+                <li><strong>Country:</strong> US</li>
+                <li><strong>Continent:</strong> NA</li>
+                <li><strong>Regional Internet Registry:</strong> ARIN</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> NONE</li>
+                <li><strong>Threat Severity Description:</strong> Severity NONE because it has no detections.</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 0</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 30</li>
+                        <li>Harmless: 64</li>
+                        <li>Timeout: 0</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 8</li>
+                <li><strong>Reputation:</strong> 0</li>
+            </ul>
+            <h4>Timeline & Last Seen</h4>
+            <ul>
+                <li><strong>Last Modification Date:</strong> 1746800972</li>
+                <li><strong>Last Analysis Date:</strong> 1746799126</li>
+                <li><strong>Whois Date:</strong> 1745521187</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1599365349</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1746752127</li>
+            </ul>
+            <h4>Certificate Information</h4>
+            <ul>
+                <li><strong>Last HTTPS Certificate Date:</strong> 1746799432</li>
+                <li><strong>Certificate Subject:</strong> CN: j.sni-644-default.ssl.fastly.net</li>
+                <li><strong>Certificate Issuer:</strong> C: BE, O: GlobalSign nv-sa, CN: GlobalSign Atlas R3 DV TLS CA 2024 Q4</li>
+                <li><strong>Certificate Validity:</strong> Not Before: 2024-11-14 05:05:17, Not After: 2025-12-16 05:05:16</li>
+                <li><strong>Certificate Public Key Algorithm:</strong> RSA (Key Size: 2048)</li>
+                <li><strong>Certificate Thumbprint SHA256:</strong> a711176e10ec73fb46efa31b2fff221c97a710f0b85bb05f47274ff1f7b349d6</li>
+                <li><strong>JARM Fingerprint:</strong> 29d3fd00029d29d00041d41d00041d6b5eefa2404a56c2ced79a0d16afe36c</li>
+            </ul>
+            <h4>Other Attributes</h4>
+            <ul>
+                <li><strong>Tags:</strong> None</li>
+                <li><strong>Total Votes (Malicious):</strong> 0</li>
+                <li><strong>Total Votes (Harmless):</strong> 0</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 7 &amp; 9</h2>
+            <ul>
+                <li><strong>Value:</strong> c9d5dc956841e000bfd8762e2f0b48b66c79b79500e894b4efa7fb9ba17e4e9e</li>
+                <li><strong>Type:</strong> hashSha256</li>
+                <li><strong>Sources:</strong> Mandiant Open Source Intelligence, ICS-CSIRT.io</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> pkg/gems/spiceworks_common-7.3.00112/nbtscan/nbtscan.exe</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (console) Intel 80386, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows command line</li>
+                <li><strong>Type Extension:</strong> exe</li>
+                <li><strong>Packer:</strong> Microsoft Visual C++</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered trojan. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> hacktool</li>
+                <li><strong>Popular Threat Name:</strong> nbtscan (Count: 19)</li>
+                <li><strong>Suggested Threat Label:</strong> hacktool.nbtscan/nettool</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 38</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 34</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 1</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> -89</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Microsoft Visual C++ compiled executable (generic):</strong> 32.2% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> f01a9a2d1e31332ed36c1a4d2839f412</li>
+                <li><strong>SHA1:</strong> 90da10004c8f6fafdaa2cf18922670a745564f45</li>
+                <li><strong>SHA256:</strong> c9d5dc956841e000bfd8762e2f0b48b66c79b79500e894b4efa7fb9ba17e4e9e</li>
+                <li><strong>TLSH:</strong> T146F2E8157581802DE01103B2917249767AF75AA1238041CFBFD93AA59BF86C3B6FCE4F</li>
+                <li><strong>Vhash:</strong> 034036551d1bz22e=z</li>
+                <li><strong>SSDeep:</strong> 384:xl+ZbDOfdyXM5ceI8cmoGfOyGPkof7DPzwVkgt+kFab6BCXS2brlszQ:T+4f9I8YCGPkm7GYkEb4CXSwX</li>
+                <li><strong>Authentihash:</strong> 0dfaabf2239d6523d1c8545bd9850ac5c4ef349fa46cfb8ba9bc929d4f583e4a</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> 0c21d28c4a8767735b186ef4321b6fe7</li>
+                <li><strong>Filecondis Dhash:</strong> f8fcfc98b8a00000</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1207697247 (Apr 08 2008 18:07:27 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> 2fa43c5392ec7923ababced078c2f98d</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 21170</li>
+                <li><strong>Sections (.text):</strong> Virtual Address: 4096, Entropy: 5.48, Raw Size: 20480, Flags: rx, MD5: b99af79097690cf2611475ea85b9fa60</li>
+                <li><strong>Compiler Product Versions:</strong> [LNK] VS98 (6.0) imp/exp build 8168 count=2</li>
+                <li><strong>Rich PE Header Hash:</strong> 646371930ed0f882699ba56d2e671296</li>
+                <li><strong>Imported Functions (WSOCK32.dll):</strong> __WSAFDIsSet, bind</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Autostart Locations:</strong> HKLM\System\CurrentControlSet\Services\7p13hcn7l</li>
+                <li><strong>Tags:</strong> peexe, checks-user-input</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects NBTScan scanner for open NETBIOS nameservers on a local or remote TCP/IP network.</li>
+                <li><strong>Crowdsourced IDS Results (Low Severity):</strong> SSLBL: Malicious JA3 SSL-Client Fingerprint detected (Tofsee). Rule Source: Abuse.ch Suricata JA3 Fingerprint Ruleset.</li>
+                <li><strong>Sandbox Verdicts (Zenbox):</strong> Harmless (CLEAN)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1207697247</li>
+                <li><strong>Last Modification Date:</strong> 1746796771</li>
+                <li><strong>Times Submitted:</strong> 700</li>
+                <li><strong>First Submission Date:</strong> 1234477188</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1315838544</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1728730801</li>
+                <li><strong>Unique Sources:</strong> 605</li>
+            </ul>
+            <h4>Crowdsourced AI References Summary</h4>
+            <p>This indicator has been associated with the following threat activities:</p>
+            <ul class="nested-list">
+                <li>Threat actors are increasingly leveraging generative AI and large language models (LLMs) to enhance phishing, social engineering, and disinformation campaigns, and to develop and refine malware.</li>
+                <li>There is a concerted effort to target Android and Chrome users, utilizing the Permhash framework for analyzing permissions in Chromium-based extensions and APKs.</li>
+                <li>Exploitation of CVE-2023-3519 in Citrix NetScaler systems is rampant, with attackers employing obfuscated PowerShell scripts and PHP webshells. The attacks bear similarities to ransomware campaigns and pose a significant threat. Concurrently, Cisco ASA SSL VPN appliances are under attack, with threat actors using brute-force tactics to gain access to internal networks and deploy ransomware such as Akira and LockBit.</li>
+                <li>Iranian-based MERCURY has been targeting Israeli organizations, exploiting Log4j 2 vulnerabilities in SysAid applications. They gain access through spear-phishing and commercial remote access applications, aiming to establish persistence, steal credentials, and move laterally within the network.</li>
+                <li>The Monti ransomware group exploited the Log4Shell vulnerability to compromise a VMware Horizon virtualization system, encrypting user desktops and servers. They used the Action1 RMM agent for persistence and remote access, and downloaded additional tools using Google Chrome. Their objective was to encrypt hosts and Veeam backups.</li>
+                <li>Mustang Panda, a Chinese APT group, is using tools like the Korplug RAT to target high-profile entities in Myanmar, exfiltrating sensitive data, including documents, recordings, and passport scans.</li>
+                <li>Chinese cyber espionage groups are utilizing botnets to conceal traffic between attackers and victims, exploiting vulnerabilities in network devices like routers and NAS devices. They employ custom malware for relaying and disguising traffic within compromised networks.</li>
+                <li>Stegoloader malware, a new steganography attack, is targeting industrial enterprises. It hides malicious code within images and documents, aiming to infect systems and steal sensitive information.</li>
+                <li>A recent report reveals a series of attacks employing commodity malware like Cobalt Strike, Mimikatz, and PowerShell Empire, along with custom malware. Initial access was achieved through phishing, vulnerability exploitation, and brute-force attacks. The attackers then moved laterally, exfiltrated data, and deployed ransomware.</li>
+                <li>The A41APT campaign has been targeting Japanese organizations and their overseas branches since 2019, exploiting vulnerabilities in systems like Pulse Connect Secure, FortiGate, and Cisco AnyConnect. The campaign has evolved to include new malware and exploits, targeting Microsoft Exchange servers.</li>
+                <li>A new backdoor, dubbed "AccessDenied," is being used to target high-value organizations. The malware bypasses security measures and steals sensitive data, posing a significant threat.</li>
+                <li>A gambling company in the Philippines fell victim to a sophisticated attack involving packed malware written in C++. The attackers used DLL side-loading, encryption, and passive DNS techniques. They also employed spear-phishing emails and a secondary C&C channel.</li>
+                <li>A Russian ransomware campaign targeted hosts in Russia and the US, using tools like Deimos C2, Metasploit, and PoshC2 to disable antivirus software, manage compromised hosts, and encrypt files. The ransom was demanded in Bitcoin.</li>
+                <li>AvosLocker, a RaaS campaign, has been active since 2021, targeting various countries and sectors. Affiliates deploy the malware and use remote utilities like AnyDesk for malicious activities. They employ both malicious and legitimate tools for password theft, lateral movement, and malware deployment.</li>
+                <li>The SLOW#TEMPEST campaign targeted Chinese-speaking users with Cobalt Strike payloads delivered via phishing emails. They used malicious ZIP files containing LNK files disguised as DOCX documents. Persistence was achieved through scheduled tasks and privilege escalation. Lateral movement involved RDP and credential theft. The campaign exhibited a high level of sophistication, indicating an experienced threat actor.</li>
+                <li>A widespread campaign employed phishing emails with weaponized Microsoft Excel documents to deliver various malware strains. They exploited vulnerabilities like CVE-2017-0199 and CVE-2017-11882, targeting organizations globally to collect strategic information. The campaign involved fake websites and the use of the "Agent Injector" Trojan.</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 8 &amp; 10</h2>
+            <ul>
+                <li><strong>Value:</strong> f01a9a2d1e31332ed36c1a4d2839f412</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> Mandiant Open Source Intelligence, ICS-CSIRT.io</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> pkg/gems/spiceworks_common-7.3.00112/nbtscan/nbtscan.exe</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (console) Intel 80386, for MS Windows</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Subsystem:</strong> Windows command line</li>
+                <li><strong>Type Extension:</strong> exe</li>
+                <li><strong>Packer:</strong> Microsoft Visual C++</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered trojan. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> hacktool</li>
+                <li><strong>Popular Threat Name:</strong> nbtscan (Count: 19)</li>
+                <li><strong>Suggested Threat Label:</strong> hacktool.nbtscan/nettool</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 38</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 34</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 1</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> -89</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Microsoft Visual C++ compiled executable (generic):</strong> 32.2% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> f01a9a2d1e31332ed36c1a4d2839f412</li>
+                <li><strong>SHA1:</strong> 90da10004c8f6fafdaa2cf18922670a745564f45</li>
+                <li><strong>SHA256:</strong> c9d5dc956841e000bfd8762e2f0b48b66c79b79500e894b4efa7fb9ba17e4e9e</li>
+                <li><strong>TLSH:</strong> T146F2E8157581802DE01103B2917249767AF75AA1238041CFBFD93AA59BF86C3B6FCE4F</li>
+                <li><strong>Vhash:</strong> 034036551d1bz22e=z</li>
+                <li><strong>SSDeep:</strong> 384:xl+ZbDOfdyXM5ceI8cmoGfOyGPkof7DPzwVkgt+kFab6BCXS2brlszQ:T+4f9I8YCGPkm7GYkEb4CXSwX</li>
+                <li><strong>Authentihash:</strong> 0dfaabf2239d6523d1c8545bd9850ac5c4ef349fa46cfb8ba9bc929d4f583e4a</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> 0c21d28c4a8767735b186ef4321b6fe7</li>
+                <li><strong>Filecondis Dhash:</strong> f8fcfc98b8a00000</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1207697247 (Apr 08 2008 18:07:27 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> 2fa43c5392ec7923ababced078c2f98d</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 21170</li>
+                <li><strong>Sections (.text):</strong> Virtual Address: 4096, Entropy: 5.48, Raw Size: 20480, Flags: rx, MD5: b99af79097690cf2611475ea85b9fa60</li>
+                <li><strong>Compiler Product Versions:</strong> [LNK] VS98 (6.0) imp/exp build 8168 count=2</li>
+                <li><strong>Rich PE Header Hash:</strong> 646371930ed0f882699ba56d2e671296</li>
+                <li><strong>Imported Functions (WSOCK32.dll):</strong> __WSAFDIsSet, bind</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Autostart Locations:</strong> HKLM\System\CurrentControlSet\Services\7p13hcn7l</li>
+                <li><strong>Tags:</strong> peexe, checks-user-input</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects NBTScan scanner for open NETBIOS nameservers on a local or remote TCP/IP network.</li>
+                <li><strong>Crowdsourced IDS Results (Low Severity):</strong> SSLBL: Malicious JA3 SSL-Client Fingerprint detected (Tofsee). Rule Source: Abuse.ch Suricata JA3 Fingerprint Ruleset.</li>
+                <li><strong>Sandbox Verdicts (Zenbox):</strong> Harmless (CLEAN)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1207697247</li>
+                <li><strong>Last Modification Date:</strong> 1746796771</li>
+                <li><strong>Times Submitted:</strong> 700</li>
+                <li><strong>First Submission Date:</strong> 1234477188</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1315838544</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1728730801</li>
+                <li><strong>Unique Sources:</strong> 605</li>
+            </ul>
+            <h4>Crowdsourced AI References Summary</h4>
+            <p>This indicator has been associated with the following threat activities:</p>
+            <ul class="nested-list">
+                <li>Threat actors are increasingly leveraging generative AI and large language models (LLMs) to enhance phishing, social engineering, and disinformation campaigns, and to develop and refine malware.</li>
+                <li>There is a concerted effort to target Android and Chrome users, utilizing the Permhash framework for analyzing permissions in Chromium-based extensions and APKs.</li>
+                <li>Exploitation of CVE-2023-3519 in Citrix NetScaler systems is rampant, with attackers employing obfuscated PowerShell scripts and PHP webshells. The attacks bear similarities to ransomware campaigns and pose a significant threat. Concurrently, Cisco ASA SSL VPN appliances are under attack, with threat actors using brute-force tactics to gain access to internal networks and deploy ransomware such as Akira and LockBit.</li>
+                <li>Iranian-based MERCURY has been targeting Israeli organizations, exploiting Log4j 2 vulnerabilities in SysAid applications. They gain access through spear-phishing and commercial remote access applications, aiming to establish persistence, steal credentials, and move laterally within the network.</li>
+                <li>The Monti ransomware group exploited the Log4Shell vulnerability to compromise a VMware Horizon virtualization system, encrypting user desktops and servers. They used the Action1 RMM agent for persistence and remote access, and downloaded additional tools using Google Chrome. Their objective was to encrypt hosts and Veeam backups.</li>
+                <li>Mustang Panda, a Chinese APT group, is using tools like the Korplug RAT to target high-profile entities in Myanmar, exfiltrating sensitive data, including documents, recordings, and passport scans.</li>
+                <li>Chinese cyber espionage groups are utilizing botnets to conceal traffic between attackers and victims, exploiting vulnerabilities in network devices like routers and NAS devices. They employ custom malware for relaying and disguising traffic within compromised networks.</li>
+                <li>Stegoloader malware, a new steganography attack, is targeting industrial enterprises. It hides malicious code within images and documents, aiming to infect systems and steal sensitive information.</li>
+                <li>A recent report reveals a series of attacks employing commodity malware like Cobalt Strike, Mimikatz, and PowerShell Empire, along with custom malware. Initial access was achieved through phishing, vulnerability exploitation, and brute-force attacks. The attackers then moved laterally, exfiltrated data, and deployed ransomware.</li>
+                <li>The A41APT campaign has been targeting Japanese organizations and their overseas branches since 2019, exploiting vulnerabilities in systems like Pulse Connect Secure, FortiGate, and Cisco AnyConnect. The campaign has evolved to include new malware and exploits, targeting Microsoft Exchange servers.</li>
+                <li>A new backdoor, dubbed "AccessDenied," is being used to target high-value organizations. The malware bypasses security measures and steals sensitive data, posing a significant threat.</li>
+                <li>A gambling company in the Philippines fell victim to a sophisticated attack involving packed malware written in C++. The attackers used DLL side-loading, encryption, and passive DNS techniques. They also employed spear-phishing emails and a secondary C&C channel.</li>
+                <li>A Russian ransomware campaign targeted hosts in Russia and the US, using tools like Deimos C2, Metasploit, and PoshC2 to disable antivirus software, manage compromised hosts, and encrypt files. The ransom was demanded in Bitcoin.</li>
+                <li>AvosLocker, a RaaS campaign, has been active since 2021, targeting various countries and sectors. Affiliates deploy the malware and use remote utilities like AnyDesk for malicious activities. They employ both malicious and legitimate tools for password theft, lateral movement, and malware deployment.</li>
+                <li>The SLOW#TEMPEST campaign targeted Chinese-speaking users with Cobalt Strike payloads delivered via phishing emails. They used malicious ZIP files containing LNK files disguised as DOCX documents. Persistence was achieved through scheduled tasks and privilege escalation. Lateral movement involved RDP and credential theft. The campaign exhibited a high level of sophistication, indicating an experienced threat actor.</li>
+                <li>A widespread campaign employed phishing emails with weaponized Microsoft Excel documents to deliver various malware strains. They exploited vulnerabilities like CVE-2017-0199 and CVE-2017-11882, targeting organizations globally to collect strategic information. The campaign involved fake websites and the use of the "Agent Injector" Trojan.</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 11</h2>
+            <ul>
+                <li><strong>Value:</strong> 4406d7271b00328218723b0a89fb953b</li>
+                <li><strong>Type:</strong> hashMd5</li>
+                <li><strong>Sources:</strong> CUDESO</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Office Open XML Document</li>
+                <li><strong>Meaningful Name:</strong> tradersway compliance.docx</li>
+                <li><strong>Magic Signature:</strong> Microsoft Word 2007+</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>Type Extension:</strong> docx</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered trojan. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> trojan</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 30</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 33</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 12</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> 0</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Word Microsoft Office Open XML Format document:</strong> 51.0% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 4406d7271b00328218723b0a89fb953b</li>
+                <li><strong>SHA1:</strong> 9172ef18ad1d0e5aa0e947321dbd2ed38bd7755d</li>
+                <li><strong>SHA256:</strong> 4ad43986f7130d8d1a40f0377e0c1ada1115fae3e972b339f728d0e794b4a20f</li>
+                <li><strong>TLSH:</strong> T11344221ECE601C38E62D5FF0D1371BDEE27ABE4426172B953811368EFA607664B6ED01</li>
+                <li><strong>Vhash:</strong> cd8a444d3aeed6bd753416c80d553d31</li>
+                <li><strong>SSDeep:</strong> 6144:YjRkm1iYfvai4uUh645iMdWa3vEfbhNt3KFA+J:YTWl01uWa3GbhP3QA+J</li>
+                <li><strong>Filecondis MD5:</strong> c974901b8ba4e5b899f94bf20a9326da</li>
+                <li><strong>Filecondis Dhash:</strong> 3363674f0f000500</li>
+            </ul>
+            <h4>OpenXML Information</h4>
+            <ul>
+                <li><strong>File Type:</strong> docx</li>
+                <li><strong>Relationships:</strong> word/document.xml, docProps/app.xml, docProps/core.xml</li>
+                <li><strong>Content Types:</strong> rels, xml, jpeg</li>
+                <li><strong>Application Properties (docprops_app):</strong>
+                    <ul class="nested-list">
+                        <li>Template: GOYZ%2FQYD1QxxKZ1CiyG3ZMeqs3uFrv3aGzUAAAA9t6ULd4uj90SmZHekWH62QtpxJ7N3LJT%2BHhqeo7Qa6IY8ELgX%2FtbD0mKv1WRcz2zJo5WNtA%3D%3D</li>
+                        <li>Total Time: 1</li>
+                        <li>Pages: 1</li>
+                        <li>Words: 0</li>
+                        <li>Characters: 1</li>
+                        <li>Application: Microsoft Office Word</li>
+                        <li>Doc Security: 0</li>
+                        <li>Lines: 1</li>
+                        <li>Paragraphs: 1</li>
+                        <li>Scale Crop: false</li>
+                        <li>Links Up To Date: false</li>
+                        <li>Characters With Spaces: 1</li>
+                        <li>Shared Doc: false</li>
+                        <li>Hyperlinks Changed: false</li>
+                        <li>App Version: 15.0000</li>
+                    </ul>
+                </li>
+                <li><strong>Core Properties (docprops_core):</strong>
+                    <ul class="nested-list">
+                        <li>Creator: DESKTOP</li>
+                        <li>Last Modified By: TW-CASLAV</li>
+                        <li>Revision: 3</li>
+                        <li>Created: 2021-03-05T08:28:00Z</li>
+                        <li>Modified: 2022-01-12T15:37:00Z</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Autostart Locations:</strong> HKLM\System\CurrentControlSet\Services\8v8a0czoa</li>
+                <li><strong>Tags:</strong> docx, calls-wmi</li>
+                <li><strong>Network Infrastructure:</strong> http://msdllopt.com/GOYZ%2FQYD1QxxKZ1CiyG3ZMeqs3uFrv3aGzUAAAA9t6ULd4uj90SmZHekWH62QtpxJ7N3LJT%2BHhqeo7Qa6IY8ELgX%2FtbD0mKv1WRcz2zJo5WNtA%3D%3D</li>
+                <li><strong>Crowdsourced IDS Results (Low Severity):</strong> (http_inspect) server response before client request.</li>
+                <li><strong>Sandbox Verdicts (DAS-Security Orcas):</strong> Harmless (CLEAN)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1614932880</li>
+                <li><strong>Last Modification Date:</strong> 1734053798</li>
+                <li><strong>Times Submitted:</strong> 3</li>
+                <li><strong>First Submission Date:</strong> 1642001957</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1656594919</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1656594919</li>
+                <li><strong>Unique Sources:</strong> 3</li>
+            </ul>
+            <h4>Crowdsourced AI References Summary</h4>
+            <p>This indicator has been associated with the following threat activities:</p>
+            <ul class="nested-list">
+                <li>Evilnum APT, a threat group targeting the FinTech industry, particularly in the UK and Europe, has been observed using updated TTPs in their recent low-volume attacks. In March 2022, they shifted focus to an intergovernmental organization involved in international migration services. The attack uses malicious MS Office Word documents with template injection to deliver the payload, establishing persistence via scheduled tasks and communicating with the C2 server using encrypted data and cookies.</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 12</h2>
+            <ul>
+                <li><strong>Value:</strong> ee573647477339784dcef81024de1be1762833a20e5cc2b89a93e47d05b86b6a</li>
+                <li><strong>Type:</strong> hashSha256</li>
+                <li><strong>Sources:</strong> Mandiant Open Source Intelligence</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> Win32 EXE</li>
+                <li><strong>Meaningful Name:</strong> Ammyy Admin</li>
+                <li><strong>File Name:</strong> AA_v3.exe</li>
+                <li><strong>Magic Signature:</strong> PE32 executable (GUI) Intel 80386, for MS Windows</li>
+                <li><strong>Type Extension:</strong> exe</li>
+                <li><strong>Subsystem Version:</strong> 4.0</li>
+                <li><strong>Packer:</strong> Microsoft Visual C++</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Threat Severity Level:</strong> HIGH</li>
+                <li><strong>Threat Severity Description:</strong> Severity HIGH because it was considered hacktool. Other contributing factor was that it could not be run in sandboxes.</li>
+                <li><strong>Popular Threat Category:</strong> hacktool</li>
+                <li><strong>Popular Threat Name:</strong> ammyy (Count: 13)</li>
+                <li><strong>Suggested Threat Label:</strong> hacktool.ammyy/ammyyadmin</li>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 45</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 28</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 4</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 0</li>
+                <li><strong>Reputation:</strong> -6</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>Win32 Executable MS Visual C++ (generic):</strong> 38.8% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 90aadf2247149996ae443e2c82af3730</li>
+                <li><strong>SHA1:</strong> 050b7eba825412b24e3f02d76d7da5ae97e10502</li>
+                <li><strong>SHA256:</strong> ee573647477339784dcef81024de1be1762833a20e5cc2b89a93e47d05b86b6a</li>
+                <li><strong>TLSH:</strong> T1EF059D133D81807FC2750571C98A1BB6FAF7EE940E798D436388BE3C5A76D01EE16629</li>
+                <li><strong>Vhash:</strong> 085046655d655270c02002e007b66dz60c0100a91z8001b7z</li>
+                <li><strong>SSDeep:</strong> 24576:Uj0JJ4p/A4npt3XojeQG5EtzRtO7GvmDguXd:UjoJ4u4zojegylDN</li>
+                <li><strong>Authentihash:</strong> 3829301c51269fb92ac651919c80f22d4c1514307a18594c0dde6565f08b06d2</li>
+                <li><strong>Magika:</strong> PEBIN</li>
+                <li><strong>Filecondis MD5:</strong> c722abea4c3a2834c11ff690ab8ba1f0</li>
+                <li><strong>Filecondis Dhash:</strong> 403a3c1c0e1e2500</li>
+            </ul>
+            <h4>PE (Portable Executable) Information</h4>
+            <ul>
+                <li><strong>Timestamp:</strong> 1600186182 (Sep 15 2020 09:29:42 GMT+0000)</li>
+                <li><strong>Import Hash (imphash):</strong> 3e985254f2e34ad96da799a2a5d33efe</li>
+                <li><strong>Machine Type:</strong> 332</li>
+                <li><strong>Entry Point:</strong> 552376</li>
+                <li><strong>Resource Languages:</strong> NEUTRAL (6), ENGLISH US (1)</li>
+                <li><strong>Resource Types:</strong> BINARY (1), RT_MANIFEST (1)</li>
+                <li><strong>Compiler Product Versions:</strong> [ C ] VS98 (6.0) SP6 build 8804 count=26</li>
+                <li><strong>Rich PE Header Hash:</strong> 822e6bfc7677fc5e76c0abe8fb474c09</li>
+                <li><strong>Imported Functions (WS2_32.dll):</strong> __WSAFDIsSet, accept</li>
+            </ul>
+            <h4>Signature Information</h4>
+            <ul>
+                <li><strong>Product:</strong> Ammyy Admin</li>
+                <li><strong>Verified:</strong> Signed</li>
+                <li><strong>Description:</strong> Ammyy Admin</li>
+                <li><strong>File Version:</strong> 3.10</li>
+                <li><strong>Signing Date:</strong> 04:09 PM 09/15/2020</li>
+                <li><strong>Signers:</strong> Ammyy LLC; Sectigo RSA Code Signing CA; Sectigo</li>
+                <li><strong>Counter Signers:</strong> Symantec Time Stamping Services Signer - G4; Symantec Time Stamping Services CA - G2; Thawte Timestamping CA</li>
+                <li><strong>Internal Name:</strong> Ammyy Admin</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Autostart Locations:</strong> HKU\S-1-5-21-4179871793-3724600072-619437758-1001\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache (Entry: D:\AA_v3.exe.FriendlyAppName)</li>
+                <li><strong>Tags:</strong> signed, legit</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects Ammyy remote access tool.</li>
+                <li><strong>Sigma Analysis Results (High Severity):</strong> Service Binary in Suspicious Folder.</li>
+                <li><strong>Sandbox Verdicts (Zenbox):</strong> Malicious (MALWARE, TROJAN - Flawedammyy)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> 1600186182</li>
+                <li><strong>Last Modification Date:</strong> 1746789442</li>
+                <li><strong>Times Submitted:</strong> 5647</li>
+                <li><strong>First Submission Date:</strong> 1600357061</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1581725084</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1746759052</li>
+                <li><strong>Unique Sources:</strong> 3333</li>
+            </ul>
+        </div>
+
+        <div class="ioc-section">
+            <h2>IoC 13</h2>
+            <ul>
+                <li><strong>Value:</strong> bed8502999ffd8b7b029c008a494cb4790f1f374cdcb6ff191780f6ff6408ff9</li>
+                <li><strong>Type:</strong> hashSha256</li>
+                <li><strong>Sources:</strong> Mandiant Open Source Intelligence</li>
+            </ul>
+
+            <h3>GTI File Report - Attributes</h3>
+            <h4>File Identification & Description</h4>
+            <ul>
+                <li><strong>Type:</strong> file</li>
+                <li><strong>Description:</strong> ELF</li>
+                <li><strong>Meaningful Name:</strong> b3astmode.mips</li>
+                <li><strong>File Name:</strong> b3astmode.mips</li>
+                <li><strong>Magic Signature:</strong> ELF 32-bit MSB executable, MIPS, MIPS-I version 1 (SYSV), statically linked, stripped</li>
+                <li><strong>MIME Type:</strong> application/octet-stream</li>
+                <li><strong>CPU Byte Order:</strong> Big endian</li>
+                <li><strong>Type Extension:</strong> elf</li>
+            </ul>
+            <h4>Threat Assessment</h4>
+            <ul>
+                <li><strong>Last Analysis Statistics:</strong>
+                    <ul class="nested-list">
+                        <li>Malicious: 39</li>
+                        <li>Suspicious: 0</li>
+                        <li>Undetected: 23</li>
+                        <li>Harmless: 0</li>
+                        <li>Timeout: 0</li>
+                        <li>Confirmed-timeout: 0</li>
+                        <li>Failure: 0</li>
+                        <li>Type-unsupported: 14</li>
+                    </ul>
+                </li>
+                <li><strong>Mandiant IC Score:</strong> 100</li>
+                <li><strong>Reputation:</strong> 0</li>
+            </ul>
+            <h4>TRID Analysis</h4>
+            <ul>
+                <li><strong>ELF Executable and Linkable format (generic):</strong> 100.0% probability</li>
+            </ul>
+            <h4>Hashes & Identifiers</h4>
+            <ul>
+                <li><strong>MD5:</strong> 698bcc43c73f227da57e5805bd88c82b</li>
+                <li><strong>SHA1:</strong> 36be0898b36cd381e96305d6d8bf49ead84e53cd</li>
+                <li><strong>SHA256:</strong> bed8502999ffd8b7b029c008a494cb4790f1f374cdcb6ff191780f6ff6408ff9</li>
+                <li><strong>TLSH:</strong> T18D83730E3E215F7DFFAC823987B74A21665933EA22E1C5C4D19CE9061E7034A641FBA5</li>
+                <li><strong>Vhash:</strong> b3ed1ec23d69201a8be98dee9cf11556</li>
+                <li><strong>SSDeep:</strong> 1536:im2yFrszc6u0vTJ2VdKXrE1nHkiRZKyLXPjsjc:IyFrau07cVSE1nHkiRZKyL/jEc</li>
+            </ul>
+            <h4>ELF Information</h4>
+            <ul>
+                <li><strong>Header Version:</strong> 1 (current)</li>
+                <li><strong>Type:</strong> EXEC (Executable file)</li>
+                <li><strong>Object Version:</strong> 0x1</li>
+                <li><strong>Data:</strong> 2's complement, big endian</li>
+                <li><strong>Machine:</strong> MIPS R3000</li>
+                <li><strong>Number of Section Headers:</strong> 13</li>
+                <li><strong>OS ABI:</strong> UNIX - System V</li>
+                <li><strong>ABI Version:</strong> 0</li>
+                <li><strong>Entrypoint:</strong> 4194912</li>
+                <li><strong>Number of Program Headers:</strong> 3</li>
+                <li><strong>Class:</strong> ELF32</li>
+                <li><strong>Segment List (LOAD):</strong> .init, .text, .fini, .rodata</li>
+            </ul>
+            <h4>Network & Behavioral Information</h4>
+            <ul>
+                <li><strong>Tags:</strong> elf</li>
+                <li><strong>Crowdsourced YARA Results:</strong> Detects Mirai Botnet Malware.</li>
+                <li><strong>Sandbox Verdicts (C2AE):</strong> Undetected (UNKNOWN_VERDICT)</li>
+            </ul>
+            <h4>Timeline & Submission</h4>
+            <ul>
+                <li><strong>Creation Date:</strong> Not available from provided JSON.</li>
+                <li><strong>Last Modification Date:</strong> 1713290493</li>
+                <li><strong>Times Submitted:</strong> 1</li>
+                <li><strong>First Submission Date:</strong> 1613433225</li>
+                <li><strong>First Seen In The Wild Date:</strong> 1593729185</li>
+                <li><strong>Last Seen In The Wild Date:</strong> 1613992202</li>
+                <li><strong>Unique Sources:</strong> 1</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

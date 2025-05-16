@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Risk Report - Last 30 Days</title>
+    <style>
+        :root {
+            --primary-color: #007bff; /* Blue */
+            --secondary-color: #6c757d; /* Gray */
+            --background-color: #f8f9fa;
+            --card-background-color: #ffffff;
+            --text-color: #212529;
+            --heading-color: #343a40;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+
+            --risk-critical: #dc3545; /* Red */
+            --risk-high: #ffc107; /* Amber */
+            --risk-medium: #fd7e14; /* Orange */
+            --risk-low: #28a745; /* Green */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background-color: var(--card-background-color);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            color: var(--heading-color);
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .risk-pattern {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .risk-pattern:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .risk-pattern h3 {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .risk-pattern .details,
+        .risk-pattern .analysis,
+        .risk-pattern .remediation {
+            margin-bottom: 15px;
+        }
+
+        .risk-pattern .details p,
+        .risk-pattern .analysis p,
+        .risk-pattern .remediation p {
+            margin: 5px 0;
+        }
+
+        .risk-pattern .details strong,
+        .risk-pattern .analysis strong,
+        .risk-pattern .remediation strong {
+            font-weight: 600;
+            color: var(--heading-color);
+        }
+
+        .risk-rating {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .risk-critical { background-color: var(--risk-critical); }
+        .risk-high { background-color: var(--risk-high); color: #212529; } /* Dark text for better contrast on yellow */
+        .risk-medium { background-color: var(--risk-medium); }
+        .risk-low { background-color: var(--risk-low); }
+
+        ul {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background-color: #e9ecef;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            color: #c7254e;
+        }
+
+        .remediation-sub-heading {
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .section h2 {
+                font-size: 1.5em;
+            }
+            .risk-pattern h3 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Security Risk Report</h1>
+            <p>Last 30 Days (Generated: 2025-05-08)</p>
+        </header>
+
+        <section class="section">
+            <h2>Executive Summary</h2>
+            <p>This report summarizes key security risks identified through the analysis of SOAR cases and SIEM alerts generated between approximately April 8th, 2025, and May 8th, 2025. Several recurring patterns were observed, particularly related to <strong>Threat Intelligence IoC Matches (File & Domain)</strong>, <strong>Suspicious Pod Creation in Kubernetes</strong>, <strong>NTDS.dit Extraction attempts</strong>, and various <strong>GCP Misconfigurations/Suspicious Activities</strong>. Critical and High priority cases/alerts often involved active breach indicators or known malware/TTPs. While many low-priority events were frequent, indicating potential reconnaissance or minor misconfigurations, the high volume warrants attention to prevent escalation. Key recommendations include prioritizing investigation of Critical/High findings, tuning noisy rules (e.g., <code>GCP Multi-Project Billing Disabled</code>), hardening endpoint and cloud configurations, and enhancing user awareness training.</p>
+        </section>
+
+        <section class="section">
+            <h2>Methodology</h2>
+            <p>This report analyzes security cases from the SOAR platform (Cases 4326-4825) and alerts from the SIEM system over the past 30 days (approx. April 8th, 2025 - May 8th, 2025). Patterns were identified based on recurring case display names and alert rule names. Risk ratings (Low, Medium, High, Critical) were assigned based on frequency, source severity/priority provided in the data, and the potential impact implied by the pattern name. Remediation steps include immediate actions for current findings (especially for 'Opened' cases/alerts) and preventative measures for future mitigation.</p>
+        </section>
+
+        <section class="section">
+            <h2>Identified Risk Patterns</h2>
+
+            <div class="risk-pattern">
+                <h3>Pattern: ATI High/Active Breach Rule Match for File IoCs <span class="risk-rating risk-critical">Critical</span><span class="risk-rating risk-high">High</span></h3>
+                <div class="details">
+                    <p><strong>Target Fields:</strong> <code>target.process.file.sha256</code> / <code>target.file.sha256</code></p>
+                    <p><strong>Source:</strong> SOAR Cases (Multiple IDs like 4822, 4820, 4813, 4812, 4811, 4804, 4803, 4798, etc.) / SIEM Alerts</p>
+                    <p><strong>Frequency:</strong> High (Observed across numerous cases with varying priorities)</p>
+                    <p><strong>Description:</strong> Detections based on known malicious file hashes (SHA256) matching files observed in process execution or at rest. Indicates potential malware execution or presence.</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> High frequency of file-based IoC matches suggests ongoing attempts to introduce or execute malware. 'Active Breach' rules indicate high-confidence threats requiring immediate attention. The different UDM fields (<code>target.process.file.sha256</code> vs <code>target.file.sha256</code>) might indicate execution vs. file write/transfer.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Prioritize cases/alerts marked 'PriorityCritical' or involving 'Active Breach' rules.</li>
+                        <li>Use <code>get_case_full_details(case_id=...)</code> for associated SOAR cases to gather context.</li>
+                        <li>Use <code>lookup_entity(entity_value='&lt;hash&gt;')</code> in Chronicle SIEM to understand the file's prevalence and history.</li>
+                        <li>Use <code>search_security_events</code> in Chronicle SIEM to find specific events involving the hash (e.g., "Find events involving file hash &lt;hash&gt; in the last 7 days").</li>
+                        <li>Use EDR tools to investigate the process tree and activity on affected endpoints.</li>
+                        <li>Isolate affected endpoints immediately if malware execution is confirmed.</li>
+                        <li>Submit file hashes to Threat Intelligence platforms (like <code>gti</code> MCP tool <code>get_file_report(hash='&lt;hash&gt;')</code>) for further analysis.</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Ensure Endpoint Detection & Response (EDR) / Antivirus (AV) solutions are deployed, active, and signatures/engines are up-to-date across all endpoints.</li>
+                        <li>Implement strict application control/allow-listing where feasible.</li>
+                        <li>Block known malicious hashes via EDR/AV policies.</li>
+                        <li>Conduct user awareness training regarding safe file downloads and execution.</li>
+                        <li>Regularly review and tune the associated detection rules (ATI rules) for accuracy and effectiveness.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="risk-pattern">
+                <h3>Pattern: Suspicious Pod Creation in kube-system Namespace <span class="risk-rating risk-medium">Medium</span></h3>
+                <div class="details">
+                    <p><strong>Source:</strong> SOAR Cases (IDs: 4821, 4786, 4782, 4748, 4723, 4722, 4720, 4554, 4553, 4550, 4548, 4445)</p>
+                    <p><strong>Frequency:</strong> Medium (12 occurrences observed)</p>
+                    <p><strong>Description:</strong> Alerts triggered by the creation of pods within the sensitive <code>kube-system</code> namespace in Kubernetes clusters.</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> The <code>kube-system</code> namespace hosts critical cluster components. Unauthorized pod creation here could indicate attempted privilege escalation, persistence, or disruption of cluster operations. While rated 'PriorityMedium' in SOAR, the sensitivity of the namespace warrants investigation.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Investigate the specific pods created in each case using <code>get_case_full_details(case_id=...)</code>.</li>
+                        <li>Use Kubernetes tools (<code>kubectl</code>) via <code>execute_command</code> or cloud provider console/API to inspect the pod definition, image used, and logs (<code>kubectl describe pod &lt;pod_name&gt; -n kube-system</code>, <code>kubectl logs &lt;pod_name&gt; -n kube-system</code>).</li>
+                        <li>Identify the user or service account responsible for the pod creation via audit logs.</li>
+                        <li>Delete suspicious pods if confirmed malicious or unauthorized (<code>kubectl delete pod &lt;pod_name&gt; -n kube-system</code>).</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Implement strict Role-Based Access Control (RBAC) policies in Kubernetes to limit who can create pods in <code>kube-system</code>.</li>
+                        <li>Use admission controllers (e.g., Gatekeeper, Kyverno) to enforce policies preventing unauthorized images or configurations in <code>kube-system</code>.</li>
+                        <li>Regularly audit RBAC permissions and pod security policies/contexts.</li>
+                        <li>Monitor Kubernetes audit logs for anomalous activity in sensitive namespaces.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="risk-pattern">
+                <h3>Pattern: NTDS.dit Extraction via Windows Volume Shadow Copy / Volume Shadow Copy Creation <span class="risk-rating risk-critical">Critical</span><span class="risk-rating risk-high">High</span></h3>
+                <div class="details">
+                    <p><strong>Source:</strong> SOAR Cases (IDs: 4793, 4792, 4787, 4760, 4754, 4729, 4728, 4724, 4686, 4685, 4680, 4646, 4645, 4604, 4599, 4562, 4561, 4556, 4515, 4511, 4485, 4484, 4446)</p>
+                    <p><strong>Frequency:</strong> High (23 occurrences observed, often High/Critical priority)</p>
+                    <p><strong>Description:</strong> Detection of techniques associated with dumping Active Directory credentials (NTDS.dit file) using Volume Shadow Copies (VSS).</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> This is a common credential access technique used by attackers after gaining initial access to dump domain credentials for lateral movement and privilege escalation. The high frequency and priority suggest active attempts or successful credential dumping.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Treat associated cases/alerts as high priority. Use <code>get_case_full_details(case_id=...)</code>.</li>
+                        <li>Investigate the source host identified in the case/alert using EDR/SIEM (<code>lookup_entity</code>, <code>search_security_events</code>). Look for suspicious process execution (e.g., <code>vssadmin</code>, <code>diskshadow</code>, <code>esentutl</code>) and network connections.</li>
+                        <li>Assume domain credentials may be compromised. Initiate password resets for privileged accounts and potentially all domain accounts, prioritizing those associated with the source host or activity timeframe.</li>
+                        <li>Isolate potentially compromised hosts.</li>
+                        <li>Scan the environment for credential dumping tools or artifacts.</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Deploy and configure EDR solutions to detect and block credential dumping techniques.</li>
+                        <li>Harden Domain Controllers: Restrict administrative access, apply security baselines, monitor for suspicious replication traffic.</li>
+                        <li>Implement Credential Guard on supported Windows systems.</li>
+                        <li>Monitor usage of tools like <code>vssadmin</code>, <code>diskshadow</code>, <code>ntdsutil</code>.</li>
+                        <li>Regularly audit privileged account usage and group memberships.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="risk-pattern">
+                <h3>Pattern: GCP Misconfigurations / Suspicious Activity <span class="risk-rating risk-high">High</span><span class="risk-rating risk-medium">Medium</span><span class="risk-rating risk-low">Low</span></h3>
+                <div class="details">
+                    <p><strong>Examples:</strong> Billing Disabled, Service API Disable, SA Key Creation/Abuse, IAM Anomalous Grant, etc.</p>
+                    <p><strong>Source:</strong> SOAR Cases (Numerous IDs) / SIEM Alerts (e.g., GCP Multi-Project Billing Disabled, GCP Service Account Editor or Owner)</p>
+                    <p><strong>Frequency:</strong> Very High (Numerous occurrences across various types)</p>
+                    <p><strong>Description:</strong> Various alerts related to potentially suspicious or risky configurations and actions within Google Cloud Platform.</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> This broad category covers several potential issues. Billing Disabled might be benign or indicate resource hijacking. Service API Disable could be defense evasion. SA Key issues, IAM grants, and Self-Investigation point towards potential credential abuse or reconnaissance. The high volume suggests a need for better configuration management and monitoring.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Investigate alerts/cases based on priority. Use <code>get_case_full_details</code> and SIEM tools.</li>
+                        <li>For Billing Disabled: Verify if intentional. If not, investigate for unauthorized resource usage.</li>
+                        <li>For API/Key/IAM issues: Review changes, identify actor, determine legitimacy, revert unauthorized/risky changes. Check for subsequent suspicious activity. Use <code>scc-mcp</code> tool <code>get_finding_remediation</code> for specific SCC findings.</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Implement Infrastructure as Code (IaC) with policy-as-code.</li>
+                        <li>Follow GCP security best practices (least privilege for IAM, regular key rotation, disable unused APIs, enable MFA).</li>
+                        <li>Regularly audit IAM permissions and Service Account key usage.</li>
+                        <li>Configure GCP Organization Policies to restrict risky actions.</li>
+                        <li>Monitor GCP Audit Logs closely for sensitive actions.</li>
+                        <li>Tune noisy detection rules based on business context.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="risk-pattern">
+                <h3>Pattern: Console Login Without MFA <span class="risk-rating risk-medium">Medium</span><span class="risk-rating risk-low">Low</span></h3>
+                <div class="details">
+                    <p><strong>Source:</strong> SOAR Cases (IDs: 4807, 4773, 4742, 4700, 4661, 4621, 4578, 4531, 4470, 4397, 4374, 4336)</p>
+                    <p><strong>Frequency:</strong> Medium (12 occurrences observed)</p>
+                    <p><strong>Description:</strong> Logins to a console (likely cloud provider or similar management interface) were detected without Multi-Factor Authentication.</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> Lack of MFA significantly increases the risk of account compromise via credential theft or guessing. While rated Low/Medium, this represents a fundamental security gap.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Identify the accounts logging in without MFA from case details.</li>
+                        <li>Review recent activity for these accounts for any signs of compromise.</li>
+                        <li>Enforce MFA immediately for these accounts.</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Mandate MFA for all user accounts, especially privileged ones, via identity provider policies.</li>
+                        <li>Regularly audit accounts to ensure MFA compliance.</li>
+                        <li>Implement conditional access policies that may require MFA based on location, device, or risk score.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="risk-pattern">
+                <h3>Pattern: Potential Defense Evasion / LOLBIN Usage <span class="risk-rating risk-critical">Critical</span><span class="risk-rating risk-high">High</span><span class="risk-rating risk-medium">Medium</span></h3>
+                <div class="details">
+                    <p><strong>Examples:</strong> BitsAdmin, MSDT, Mshta, Cmstp, Rundll32, WMI, PowerShell Obfuscation, Diskshadow, Regsvr32, MSBuild, Wevtutil, Auditpol</p>
+                    <p><strong>Source:</strong> SOAR Cases (Numerous IDs)</p>
+                    <p><strong>Frequency:</strong> Very High (Spread across numerous distinct case types)</p>
+                    <p><strong>Description:</strong> Use of legitimate Windows binaries ("Living Off The Land Binaries" - LOLBINs) or scripting engines (PowerShell, WMI) in ways commonly associated with malicious activity.</p>
+                </div>
+                <div class="analysis">
+                    <p><strong>Analysis:</strong> Attackers leverage built-in tools to evade detection. The high frequency and variety indicate sophisticated or persistent attempts to operate stealthily. PowerShell obfuscation and tools like Mimikatz/Secretsdump are particularly high-risk.</p>
+                </div>
+                <div class="remediation">
+                    <p class="remediation-sub-heading">Immediate Actions:</p>
+                    <ul>
+                        <li>Prioritize cases involving credential dumping, defense evasion, or high levels of obfuscation.</li>
+                        <li>Investigate command lines and parent processes using EDR/SIEM.</li>
+                        <li>Analyze any downloaded files or scripts.</li>
+                        <li>Isolate affected hosts.</li>
+                        <li>Assume compromise if credential dumping or high-confidence defense evasion is confirmed.</li>
+                    </ul>
+                    <p class="remediation-sub-heading">Preventative Measures:</p>
+                    <ul>
+                        <li>Deploy EDR with strong behavioral detection capabilities for LOLBIN/script abuse.</li>
+                        <li>Enable enhanced PowerShell logging and forward logs to SIEM.</li>
+                        <li>Use Attack Surface Reduction (ASR) rules on Windows.</li>
+                        <li>Implement application control to restrict unnecessary built-in tools.</li>
+                        <li>Restrict WMI/PowerShell remoting where not required.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="section">
+            <h2>Conclusion & Recommendations</h2>
+            <p>The analysis reveals a high volume of security events, with notable recurring patterns around <strong>Threat Intelligence File IoC matches</strong>, <strong>Suspicious Kubernetes activity</strong>, <strong>Credential Dumping attempts (NTDS.dit/VSS)</strong>, various <strong>GCP misconfigurations</strong>, and the abuse of <strong>LOLBINs/Scripting Engines</strong> for defense evasion.</p>
+            <p class="remediation-sub-heading">Priority Recommendations:</p>
+            <ul>
+                <li><strong>Investigate Critical/High Cases:</strong> Immediately investigate all SOAR cases and SIEM alerts rated Critical or High, particularly those related to "Active Breach" IoCs, credential dumping (NTDS.dit), and high-confidence defense evasion techniques (e.g., PowerShell Obfuscation, Mimikatz). Assume compromise until proven otherwise.</li>
+                <li><strong>Harden Endpoints & AD:</strong> Strengthen EDR configurations to detect/block LOLBIN abuse and credential dumping. Implement Credential Guard and ASR rules. Aggressively patch systems. Review and harden Domain Controller security and privileged access. Initiate prioritized password resets based on investigation findings.</li>
+                <li><strong>Review Kubernetes Security:</strong> Audit RBAC policies, especially for the <code>kube-system</code> namespace. Implement admission controllers to enforce stricter pod security and image policies. Enhance monitoring of Kubernetes audit logs.</li>
+                <li><strong>Improve Cloud Security Posture:</strong> Mandate MFA across all cloud access. Implement IaC and policy-as-code to prevent risky configurations. Regularly audit GCP IAM roles, Service Accounts, and API usage. Tune noisy cloud detection rules (e.g., Billing Disabled) based on business context.</li>
+                <li><strong>Enhance Monitoring & Logging:</strong> Ensure comprehensive logging (especially PowerShell Script Block/Module logging, GCP Audit Logs, K8s Audit Logs) is enabled and forwarded to the SIEM for effective detection and investigation.</li>
+            </ul>
+            <p>Regularly reviewing these patterns and implementing the preventative measures is crucial to reducing the overall risk posture.</p>
+        </section>
+
+        <footer>
+            <p>Security Risk Report &copy; 2025. Generated: May 8, 2025.</p>
+        </footer>
+    </div>
+</body>
+</html>
