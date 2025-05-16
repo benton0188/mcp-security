@@ -1,0 +1,54 @@
+rule Composite_MacroDownload_ATIMatch {
+  meta:
+    author = "Cline"
+    description = "Detects an ATI rule match occurring on the same host/user shortly after a file download via Office macro alert."
+    severity = "HIGH"
+    priority = "MEDIUM"
+
+  events:
+    // Event 1: Executable downloaded via Macro alert
+    $macro_download.metadata.product_event_type = "RULE_DETECTION" and // Or GCTI_FINDING etc.
+    $macro_download.security_result.rule_name = "demoverse_user_download_executable_from_macro" and
+    $macro_download.principal.hostname = $hostname and
+    $macro_download.principal.user.userid = $user // Optional user correlation
+    // Note: We don't strictly need the hash for this correlation path
+
+    // Event 2: ATI rule match potentially related to the download/subsequent activity
+    $ati_match.metadata.product_event_type = "RULE_DETECTION" and // Or GCTI_FINDING etc.
+    (
+      // Include various ATI rule names that indicate active breach or high priority IoC matches
+      $ati_match.security_result.rule_name = "ATI High Priority Rule Match for File IoCs (target.process.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI Active Breach Rule Match for File IoCs (target.process.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI High Priority Rule Match for File IoCs (principal.process.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI Active Breach Rule Match for File IoCs (principal.process.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI High Priority Rule Match for File IoCs (target.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI Active Breach Rule Match for File IoCs (target.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI High Priority Rule Match for File IoCs (target.process.parent.process.file.sha256)" or
+      $ati_match.security_result.rule_name = "ATI Active Breach Rule Match for File IoCs (target.process.parent.process.file.sha256)"
+      // Add other relevant ATI rule names if necessary
+    ) and
+    $ati_match.principal.hostname = $hostname and
+    $ati_match.principal.user.userid = $user // Optional user correlation
+
+  match:
+    // Correlate over hostname and user (optional) within 1 hour
+    $hostname, $user over 1h
+
+  outcome:
+    // Aggregate values as multiple events might match the same host/user over the window
+    // Aggregate values using basic aggregation functions as required for match over time window
+    $macro_rule_names = array_distinct($macro_download.security_result.rule_name) // Aggregated list
+    $ati_rule_names = array_distinct($ati_match.security_result.rule_name) // Aggregated list
+    // Note: Combining arrays might need to happen downstream if array_concat is not supported here
+
+    // Example risk score - adjust as needed
+    // Aggregate risk scores (e.g., take the maximum score observed for each event type)
+    // Handle potential nulls and final combination downstream if necessary.
+    $max_macro_risk = max($macro_download.security_result.risk_score)
+    $max_ati_risk = max($ati_match.security_result.risk_score)
+    // $combined_risk_score calculation removed due to parser limitations on functions
+
+  condition:
+    // Require both events for the same host and user (optional) within the match window
+    $macro_download and $ati_match
+}
