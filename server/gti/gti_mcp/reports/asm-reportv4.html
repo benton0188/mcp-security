@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACME Corp Attack Surface Threat Report - 2024</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a; /* Dark background for the 'outside' of pages */
+      color: #e0e0e0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .report-page {
+      background-color: #0A0A0A; /* Black for page background */
+      min-height: 277mm; /* Approximate A4 page height, adjust as needed for content */
+      /* max-height: 277mm; /* Removing max-height allows content to determine height, footer fixes should handle overflow */
+      /* overflow: hidden; /* Removing overflow hidden temporarily to see if footer fix works */
+      width: 210mm; /* A4 width */
+      margin: 20px auto;
+      padding: 25mm 20mm 20mm 20mm; /* Approximate A4 padding (top, right, bottom, left) */
+      box-sizing: border-box;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Cover Page Styles --- */
+    .cover-page {
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cover-page .top-logos { /* Kept for structure if logos were to be added programmatically */
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      top: 30px;
+      left: 0;
+      padding: 0 30px;
+      box-sizing: border-box;
+      height: 40px; /* Give some space even if empty */
+    }
+
+
+    .cover-page .date-vertical {
+      position: absolute;
+      left: 20mm;
+      top: 100px; /* Adjust as needed */
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.9em;
+      color: #a0a0a0;
+    }
+
+    .cover-page .main-title-stylized {
+      font-size: 5em; /* Large stylized text */
+      font-weight: 700;
+      color: #4CAF50; /* Green accent */
+      letter-spacing: 5px;
+      margin: 120px 0; /* Adjusted margin due to removed top logos taking space */
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      background: radial-gradient(circle, rgba(76,175,80,0.1) 0%, rgba(10,10,10,0) 70%);
+      padding: 20px;
+    }
+    .cover-page .bottom-text-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: absolute;
+      bottom: 30mm;
+      left: 0;
+      padding: 0 30mm;
+      box-sizing: border-box;
+    }
+    .cover-page .report-title-block {
+      text-align: left;
+    }
+    .cover-page .report-title-block h1 {
+      font-size: 2.2em;
+      color: #ffffff;
+      margin: 0 0 5px 0;
+      font-weight: 700;
+    }
+    .cover-page .report-title-block h2 {
+      font-size: 1.5em;
+      color: #e0e0e0;
+      margin: 0;
+      font-weight: 500;
+    }
+     .cover-page .report-subtitle-block {
+      text-align: right;
+      color: #c0c0c0;
+      font-size: 1em;
+    }
+
+    /* --- Table of Contents Styles --- */
+    .toc-page {
+      display: flex;
+    }
+    .toc-page .toc-vertical-title {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 3em;
+      font-weight: 700;
+      color: #e0e0e0;
+      margin-right: 50px;
+      white-space: nowrap;
+      align-self: flex-start;
+      padding-top: 20px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .toc-page .toc-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 50px;
+      flex-grow: 1;
+    }
+    .toc-page .toc-list li {
+      margin-bottom: 20px;
+      font-size: 1.2em;
+    }
+    .toc-page .toc-list li a {
+      text-decoration: none;
+      color: #bdbdbd;
+      display: flex;
+      justify-content: space-between;
+    }
+    .toc-page .toc-list li a:hover {
+      color: #4CAF50;
+    }
+    .toc-page .toc-list li a .toc-arrow {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+    .toc-page .toc-list ul {
+      list-style-type: none;
+      padding-left: 30px;
+      margin-top: 10px;
+    }
+    .toc-page .toc-list ul li {
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+    .toc-page .abstract-lines-placeholder { /* Kept for visual style, not a content placeholder */
+      position: absolute;
+      top: 0;
+      left: 150px;
+      right: 0;
+      bottom: 0;
+      background:
+        linear-gradient(135deg, rgba(76,175,80,0.03) 25%, transparent 25%) -50px 0,
+        linear-gradient(225deg, rgba(76,175,80,0.03) 25%, transparent 25%) -50px 0,
+        linear-gradient(315deg, rgba(76,175,80,0.03) 25%, transparent 25%),
+        linear-gradient(45deg,  rgba(76,175,80,0.03) 25%, transparent 25%);
+      background-size: 100px 100px;
+      opacity: 0.5;
+      z-index: -1;
+    }
+
+
+    /* --- Section Intro Page Styles --- */
+    .section-intro-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .section-intro-page .section-logo-placeholder-area { /* Area where logo would be */
+      height: 30px; /* Reserve some space if a logo were to be added */
+      margin-bottom: 10px;
+      position: absolute; /* Keep positioning structure */
+      top: 30mm;
+      left: 20mm;
+    }
+    .section-intro-page .section-main-title {
+      font-size: 2.8em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 60px; /* Adjusted if logo area above is effectively empty */
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 3px solid #4CAF50;
+      align-self: flex-start;
+      display: inline-block;
+    }
+    .section-intro-page .section-main-subtitle {
+       font-size: 2.0em;
+       font-weight: 700;
+       color: #ffffff;
+       margin-bottom: 30px;
+    }
+    .section-intro-page .section-intro-text {
+      font-size: 1.1em;
+      color: #d0d0d0;
+      max-width: 80%; /* This might need adjustment if text is long*/
+      margin-bottom: 15px; /* Reduced margin */
+    }
+    .section-intro-page ol, .section-intro-page ul {
+        font-size: 1.0em; /* Adjusted for intro pages if lists are used */
+        max-width: 90%;
+    }
+    .section-intro-page .section-number-large {
+      font-size: 8em;
+      font-weight: 700;
+      color: rgba(76,175,80,0.1);
+      position: absolute;
+      bottom: 30mm; /* Increased space for footer */
+      left: 20mm;
+      z-index: 0;
+    }
+
+
+    /* --- Content Page Styles --- */
+    .content-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+      height: 20px; /* Give some space even if logo placeholder removed */
+    }
+
+    .content-page h3 {
+      font-size: 1.6em;
+      color: #4CAF50;
+      margin-top: 20px; /* Reduced margin for tighter packing */
+      margin-bottom: 10px;
+      font-weight: 500;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #2c522e;
+    }
+    .content-page h4 {
+      font-size: 1.2em; /* Reduced for tighter packing */
+      color: #b0dab1;
+      margin-top: 15px; /* Reduced for tighter packing */
+      margin-bottom: 5px; /* Reduced for tighter packing */
+      font-weight: 500;
+    }
+    .content-page ul {
+      padding-left: 20px;
+      margin-bottom: 10px; /* Reduced for tighter packing */
+    }
+    .content-page li {
+      margin-bottom: 3px; /* Reduced for tighter packing */
+      text-align: left;
+      font-size: 0.95em;
+    }
+    .content-page p {
+      margin-bottom: 10px; /* Reduced for tighter packing */
+      text-align: justify;
+    }
+    .content-page .finding-item {
+        margin-bottom: 12px; /* Space between each finding */
+        padding-bottom: 8px; /* Space within finding before border */
+        border-bottom: 1px dashed #2a2a2a;
+    }
+    .content-page .finding-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0; /* No margin for the very last item before footer */
+    }
+
+
+    .key-findings-box {
+      background-color: rgba(76,175,80,0.05);
+      border-left: 4px solid #4CAF50;
+      padding: 15px;
+      margin: 20px 0;
+      color: #c0c0c0;
+    }
+    .key-findings-box ul {
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+    .key-findings-box ul li ul { /* Nested list style */
+        padding-left: 15px;
+        margin-top: 5px;
+    }
+    .key-findings-box ul li ul li{
+        font-size: 0.9em;
+    }
+
+
+    .severity { font-weight: bold; }
+    .severity-1 { color: #D9534F; } /* Critical */
+    .severity-2 { color: #E48A00; } /* High */
+    .severity-3 { color: #F0AD4E; } /* Medium */
+    .severity-4 { color: #f8d568; } /* Med-Low (Visual intermediate for 4 if needed) */
+    .severity-5 { color: #5BC0DE; } /* Low / Info */
+
+
+    .remediation-box {
+      background-color: rgba(46, 139, 87, 0.1);
+      border: 1px solid rgba(46, 139, 87, 0.3);
+      padding: 8px 12px; /* Reduced padding */
+      margin-top: 8px; /* Reduced margin */
+      margin-bottom: 10px; /* Reduced margin */
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .remediation-box strong {
+      color: #90ee90;
+    }
+
+    /* --- Common Page Elements --- */
+    .page-footer {
+      margin-top: auto; /* Pushes footer to the bottom of the flex flow */
+      padding-top: 15px; /* Space above footer text */
+      border-top: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8em;
+      color: #777;
+      /* Removed absolute positioning: position, bottom, left, right, width */
+      /* Footer is now a flow item. .report-page's bottom padding will be below it. */
+    }
+    .page-footer .next-chapter {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+    .page-footer .next-chapter:hover {
+      text-decoration: underline;
+    }
+
+    /* Back Page */
+    .back-page {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center;
+    }
+    .back-page > *:not(.page-footer):not(.final-footer-text) { /* Target content except footers */
+        max-height: calc(277mm - 25mm - 20mm - 50mm); /* Page height - top_pad - bottom_pad - approx_footer_space */
+        overflow-y: auto; /* Add scroll if content is too long */
+    }
+    .back-page .main-logo-placeholder-area {
+      height: 60px;
+      margin-bottom: 20px; /* Reduced margin */
+    }
+    .back-page h3 {
+      color: #4CAF50;
+      font-size: 1.5em;
+      margin-top: 20px; /* Reduced margin */
+      margin-bottom: 10px;
+    }
+    .back-page p {
+      max-width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      color: #b0b0b0;
+      margin-bottom: 15px; /* Reduced margin */
+      text-align: center;
+    }
+    .back-page .contact-info {
+      margin-top: 20px; /* Reduced margin */
+    }
+    .back-page .final-footer-text { /* This one might still need absolute if it's separate from page number footer */
+      position: absolute;
+      bottom: 40mm; /* Adjusted to be above the page number footer */
+      left: 20mm;
+      right: 20mm;
+      font-size: 0.8em;
+      color: #777;
+      text-align: center;
+    }
+    .code-block {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap; /* Wrap long lines */
+      word-break: break-all; /* Break words to prevent overflow */
+      font-size: 0.85em;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      max-height: 150px; /* Limit height and make scrollable if needed */
+      overflow-y: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Page 1: Cover Page -->
+  <div class="report-page cover-page">
+    <div class="top-logos">
+    </div>
+    <div class="date-vertical">2024</div>
+    <div>
+      <div class="main-title-stylized">FINDINGS</div>
+    </div>
+    <div class="bottom-text-container">
+      <div class="report-title-block">
+        <h1>ACME CORP</h1>
+        <h2>ATTACK SURFACE<br>THREAT REPORT</h2>
+      </div>
+      <div class="report-subtitle-block">
+        Lessons in Attack Surface Risk<br>Based on Observable Data
+      </div>
+    </div>
+  </div>
+
+  <!-- Page 2: Table of Contents -->
+  <div class="report-page toc-page" id="toc">
+    <div class="abstract-lines-placeholder"></div>
+    <div class="toc-vertical-title">TABLE OF CONTENTS</div>
+    <ul class="toc-list">
+      <li>
+        <a href="#executive-summary">
+          <span>01&nbsp;&nbsp;&nbsp;Executive Summary</span>
+          <span class="toc-arrow">&rarr;</span>
+        </a>
+        <ul>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#key-findings">Key Findings</a></li>
+          <li><a href="#initial-recommendations">Recommendations</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#top-exposures-intro">
+          <span>02&nbsp;&nbsp;&nbsp;Top Attack Surface Exposures</span>
+          <span class="toc-arrow">&rarr;</span>
+        </a>
+         <ul>
+          <li><a href="#misconfigurations-page-1">Misconfigurations</a></li>
+          <li><a href="#vulnerabilities-page-1">Potential Vulnerabilities</a></li>
+          <li><a href="#leaks-page-1">Information Leaks & Reconnaissance Findings</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#conclusion">
+          <span>03&nbsp;&nbsp;&nbsp;Conclusion</span>
+          <span class="toc-arrow">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="#detailed-recommendations">
+          <span>04&nbsp;&nbsp;&nbsp;Recommendations (Detailed)</span>
+          <span class="toc-arrow">&rarr;</span>
+        </a>
+      </li>
+      <li>
+        <a href="#methodology">
+          <span>05&nbsp;&nbsp;&nbsp;Methodology</span>
+          <span class="toc-arrow">&rarr;</span>
+        </a>
+      </li>
+    </ul>
+    <div class="page-footer">
+      <span>CONFIDENTIAL</span>
+      <span>Page 2</span>
+    </div>
+  </div>
+
+  <!-- Page 3: Executive Summary (Section Intro) -->
+  <div class="report-page section-intro-page" id="executive-summary">
+    <div class="section-logo-placeholder-area"></div>
+    <div class="section-main-title">EXECUTIVE</div>
+    <div class="section-main-subtitle">SUMMARY</div>
+
+    <p class="section-intro-text" id="overview">Modern organizations operate in an increasingly complex digital landscape. The proliferation of internet-facing assets, both known and unknown, significantly expands the attack surface, making it challenging to maintain robust security. Exposures on these assets can lead to compromise, often turning organizations into victims of opportunistic attacks rather than targeted campaigns. Understanding the full scope of an organization's digital footprint is a foundational element of any effective cybersecurity strategy. This report outlines key findings from an analysis of ACME Corp's observable attack surface, providing actionable intelligence to mitigate identified risks.</p>
+
+    <div class="section-number-large">01</div>
+    <div class="page-footer">
+      <a href="#toc" class="next-chapter">&larr; TABLE OF CONTENTS</a>
+      <a href="#key-findings-page" class="next-chapter">NEXT CHAPTER &rarr;</a>
+      <span>Page 3</span>
+    </div>
+  </div>
+
+  <!-- Page 4: Executive Summary (Key Findings & Initial Recommendations) -->
+  <div class="report-page content-page" id="key-findings-page">
+    <div class="content-page-header">
+      <span class="page-section-title">01 Executive summary</span>
+    </div>
+
+    <h3 id="key-findings">Key Findings</h3>
+    <div class="key-findings-box">
+      <p>The analysis of ACME Corp's attack surface revealed several critical and high-risk categories of exposures:</p>
+      <ul>
+        <li><strong>Extensive Misconfigurations:</strong> Numerous instances were identified, significantly increasing risk. These include:
+            <ul>
+                <li>Exposed FTP services, such as on <code>173.254.223.253:21/tcp</code>, transmitting data in plaintext.</li>
+                <li>Publicly accessible MySQL database services, for instance, on <code>173.254.223.252:3306/tcp</code>.</li>
+                <li>Insecure HTTP redirect patterns on assets like <code>http://23.228.86.241:2087</code>, risking Man-in-the-Middle attacks.</li>
+                <li>Widespread use of weak SSL/TLS ciphers (e.g., RC4, DES-CBC3-SHA on <code>https://www.acme.com/software/pbmplus/</code>) and deprecated protocols (TLS 1.0/1.1 on <code>https://www.acme.com/software/saytime/</code>).</li>
+                <li>Certificate management failures, including self-signed certificates (e.g., <code>https://173.254.223.252:443</code> for acmeimages.com, which was also expired) and (almost) expired certificates (e.g., <code>https://23.228.86.241:443</code>).</li>
+                <li>Exposed directory listing on <code>https://173.254.223.252:443</code>, revealing internal file structures.</li>
+            </ul>
+        </li>
+        <li><strong>Critical Potential Vulnerabilities:</strong> An inferred Server-Side Request Forgery (SSRF) vulnerability (CVE-2021-40438) was identified on multiple Apache HTTP Servers, including <code>https://85.10.225.138:443</code> and <code>http://root.acme.com:80</code>, posing a severe risk of unauthorized server-side actions.</li>
+        <li><strong>Significant Information Leaks & Reconnaissance Risks:</strong>
+            <ul>
+                <li>A large number of suspicious domains (e.g., <code>acme.ar</code>, <code>acme-finance.com</code>, <code>acmecorpcom.cm</code>) potentially related to typosquatting or phishing targeting ACME Corp and its brands.</li>
+                <li>Discovery of publicly available Android mobile applications like "Feed app - Grocery delivery" (<code>com.popcornvan.app</code>) and "Roscas Maximus" (<code>br.com.marcoscnc.roscasmaximus</code>) associated with the "acme" keyword, requiring legitimacy verification.</li>
+            </ul>
+        </li>
+      </ul>
+    </div>
+
+    <h3 id="initial-recommendations">Initial Recommendations</h3>
+    <ul>
+      <li>Prioritize immediate remediation of critical vulnerabilities (SSRF CVE-2021-40438) and high-severity misconfigurations (exposed services, insecure redirects).</li>
+      <li>Strengthen configuration management and system hardening processes across all internet-facing assets.</li>
+      <li>Conduct thorough vulnerability assessments, implement a robust patch management program, particularly for web server software.</li>
+      <li>Investigate all suspicious domains and mobile applications for malicious intent and initiate takedowns where necessary.</li>
+      <li>Enhance asset visibility through comprehensive inventory and implement continuous attack surface monitoring.</li>
+      <li>Overhaul certificate lifecycle management to prevent use of self-signed, expired, or weak certificates.</li>
+      <li>Disable weak ciphers and deprecated SSL/TLS protocols globally.</li>
+    </ul>
+
+    <div class="page-footer">
+       <a href="#executive-summary" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#top-exposures-intro" class="next-chapter">NEXT CHAPTER &rarr;</a>
+      <span>Page 4</span>
+    </div>
+  </div>
+
+  <!-- Page 5: Top Attack Surface Exposures (Section Intro) -->
+  <div class="report-page section-intro-page" id="top-exposures-intro">
+    <div class="section-logo-placeholder-area"></div>
+    <div class="section-main-title">TOP ATTACK</div>
+    <div class="section-main-subtitle">SURFACE EXPOSURES</div>
+    <p class="section-intro-text">This section provides a detailed breakdown of the specific exposures identified within ACME Corp's attack surface. Findings are categorized by the nature of the risk they represent: Misconfigurations, Potential Vulnerabilities, and Information Leaks & Reconnaissance Findings. Each item includes its severity, affected entity, a brief description, supporting details where applicable, and recommended remediation. These findings are based on data collected throughout 2024, with specific 'first seen' and 'last seen' dates noted in the underlying data where available.</p>
+    <div class="section-number-large">02</div>
+    <div class="page-footer">
+      <a href="#key-findings-page" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#misconfigurations-page-1" class="next-chapter">NEXT: MISCONFIGURATIONS &rarr;</a>
+      <span>Page 5</span>
+    </div>
+  </div>
+
+  <!-- Page 6: Misconfigurations - Exposed Services -->
+  <div class="report-page content-page" id="misconfigurations-page-1">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations</span>
+    </div>
+    <h3 id="misconfigurations">Misconfigurations</h3>
+    <h4>Exposed FTP Services</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Exposed FTP Service</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>173.254.223.252:21/tcp</code></li>
+        <li><strong>Description:</strong> ProFTPd detected. FTP transmits data in plaintext.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Prevent public access if not needed. Use FTPS or SFTP.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Exposed FTP Service</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>173.254.223.253:21/tcp</code></li>
+        <li><strong>Description:</strong> ProFTPd detected. FTP transmits data in plaintext.</li>
+        <li><strong>First Seen:</strong> 2024-05-20</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Prevent public access if not needed. Use FTPS or SFTP.</div>
+    </div>
+
+    <h4>Exposed Database Services (MySQL)</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Exposed Database Service (MySQL)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>173.254.223.252:3306/tcp</code></li>
+        <li><strong>Description:</strong> Exposed MySQL server identified. Risk of unauthorized access. Connection error "not allowed to connect" indicates some access control but service is exposed.</li>
+        <li><strong>First Seen:</strong> 2024-05-14</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Prevent public access. Implement strict access controls (firewall, trusted IPs).</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Exposed Database Service (MySQL)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>173.254.223.253:3306/tcp</code></li>
+        <li><strong>Description:</strong> Exposed MySQL server identified. Risk of unauthorized access. Connection error "not allowed to connect" indicates some access control but service is exposed.</li>
+        <li><strong>First Seen:</strong> 2024-05-15</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Prevent public access. Implement strict access controls (firewall, trusted IPs).</div>
+    </div>
+    <div class="page-footer">
+      <a href="#top-exposures-intro" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#misconfigurations-page-2" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 6</span>
+    </div>
+  </div>
+
+  <!-- Page 7: Misconfigurations - Insecure Redirects -->
+  <div class="report-page content-page" id="misconfigurations-page-2">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations (Cont.)</span>
+    </div>
+    <h4>Insecure Redirect Patterns</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Insecure Redirect Pattern</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://23.228.86.241:2083</code></li>
+        <li><strong>Description:</strong> Redirect chain contains endpoint <code>http://23.228.86.241:2083/</code> over plain HTTP, no HSTS. Redirects to <code>https://la-13.oodda.com:2083</code>. Risk of MITM.</li>
+        <li><strong>First Seen:</strong> 2024-09-27</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Ensure all redirects and resources in chain use HTTPS. Implement HSTS.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Insecure Redirect Pattern</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://23.228.86.241:2087</code></li>
+        <li><strong>Description:</strong> Redirect chain contains endpoint <code>http://23.228.86.241:2087/</code> over plain HTTP, no HSTS. Redirects to <code>https://la-13.oodda.com:2087</code>. Risk of MITM.</li>
+        <li><strong>First Seen:</strong> 2024-09-10</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Ensure all redirects and resources in chain use HTTPS. Implement HSTS.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Insecure Redirect Pattern</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://mail.acmecorp.com:2087</code></li>
+        <li><strong>Description:</strong> Redirect chain contains <code>http://mail.acmecorp.com:2087/</code> over plain HTTP. Redirects to <code>https://la-30.oodda.com:2087</code>. Risk of MITM.</li>
+        <li><strong>First Seen:</strong> 2024-05-16</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Ensure all redirects and resources in chain use HTTPS. Implement HSTS.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Insecure Redirect Pattern</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://104.223.136.79:80</code></li>
+        <li><strong>Description:</strong> Redirects to <code>https://104.223.136.79/</code> but initial request is HTTP. Risk of MITM.</li>
+        <li><strong>First Seen:</strong> 2024-07-10</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Ensure all redirects and resources in chain use HTTPS. Implement HSTS.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Insecure Redirect Pattern</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://mail.acmecorp.com:2083</code></li>
+        <li><strong>Description:</strong> Redirect chain contains <code>http://mail.acmecorp.com:2083/</code> over plain HTTP. Redirects to <code>https://la-30.oodda.com:2083</code>. Risk of MITM.</li>
+        <li><strong>First Seen:</strong> 2024-05-20</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Ensure all redirects and resources in chain use HTTPS. Implement HSTS.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-1" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#misconfigurations-page-3" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 7</span>
+    </div>
+  </div>
+
+  <!-- Page 8: Misconfigurations - Certificate Issues -->
+  <div class="report-page content-page" id="misconfigurations-page-3">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations (Cont.)</span>
+    </div>
+    <h4>Certificate Management Issues</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> (Almost) Expired Certificate</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>http://23.228.86.241:2083</code> (Certificate for <code>la-13.oodda.com</code>)</li>
+        <li><strong>Description:</strong> Certificate will expire or has expired (Not Valid after 2024-10-11 05:21:23 UTC).</li>
+        <li><strong>First Seen:</strong> 2024-09-30</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Replace the certificate. Implement robust certificate lifecycle management.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> (Almost) Expired Certificate</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>https://23.228.86.241:443</code> (Certificate for <code>*.oodda.com</code>)</li>
+        <li><strong>Description:</strong> Certificate will expire or has expired (Not Valid after 2024-10-11 05:21:23 UTC).</li>
+        <li><strong>First Seen:</strong> 2024-09-21</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Replace the certificate. Implement robust certificate lifecycle management.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Self Signed Certificate Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://173.254.223.252:443</code></li>
+        <li><strong>Description:</strong> Site uses a self-signed SSL/TLS certificate (CN=acmeimages.com). No trust validation from CA.</li>
+        <li><strong>First Seen:</strong> 2024-05-19</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Replace with a certificate from a trusted CA.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Expired Certificate</li>
+        <li><strong>Severity:</strong> <span class="severity severity-3">3 (Medium)</span></li>
+        <li><strong>Entity:</strong> <code>https://173.254.223.252:443</code></li>
+        <li><strong>Description:</strong> Certificate for CN=acmeimages.com expired on 2021-09-22 18:16:40 UTC.</li>
+        <li><strong>First Seen:</strong> 2024-05-19</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Replace the expired certificate immediately with a valid one from a trusted CA.</div>
+    </div>
+     <h4>Directory Listing</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Directory Listing Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-4">4 (Medium-Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://173.254.223.252:443</code></li>
+        <li><strong>Description:</strong> Server displays directory contents ("Index of /") exposing file/directory names (cgi-bin/, images/, webinopoly/).</li>
+        <li><strong>First Seen:</strong> 2024-05-19</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable directory listing on the web server.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-2" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#misconfigurations-page-4" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 8</span>
+    </div>
+  </div>
+
+  <!-- Page 9: Misconfigurations - Weak SSL/TLS Ciphers -->
+  <div class="report-page content-page" id="misconfigurations-page-4">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations (Cont.)</span>
+    </div>
+    <h4>Weak SSL/TLS Ciphers Enabled</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/software/pbmplus/</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA, DES-CBC3-SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/software/thumbnail_index/</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA, DES-CBC3-SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/software/file_date/</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://104.223.136.79:443</code></li>
+        <li><strong>Description:</strong> Supports weak cipher DES-CBC3-SHA.</li>
+        <li><strong>First Seen:</strong> 2024-08-11</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://mail.acmecorp.com:443</code></li>
+        <li><strong>Description:</strong> Supports weak cipher DES-CBC3-SHA. (Two identical entries in data, consolidated).</li>
+        <li><strong>First Seen:</strong> 2024-08-11</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-3" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#misconfigurations-page-5" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 9</span>
+    </div>
+  </div>
+
+  <!-- Page 10: Misconfigurations - Weak SSL/TLS Ciphers (Cont.) & Deprecated Protocols -->
+  <div class="report-page content-page" id="misconfigurations-page-5">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations (Cont.)</span>
+    </div>
+    <h4>Weak SSL/TLS Ciphers Enabled (Continued)</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/planimeter/planimeter.jsm</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/jef/religion_sex/</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/javascript/acme.suggestions.html</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/labelmaker/</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/licensemaker/licenses.cgi</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers like DES-CBC3-SHA, TLS_RSA_WITH_RC4_128_MD5, TLS_RSA_WITH_RC4_128_SHA.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers. Prioritize strong, modern cipher suites.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Weak SSL/TLS Ciphers Enabled</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>23.93.106.140:443/tcp</code></li>
+        <li><strong>Description:</strong> Supports weak ciphers DES-CBC3-SHA, RC4-MD5, RC4-SHA.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable weak ciphers and deprecated protocols.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-4" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#misconfigurations-page-6" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 10</span>
+    </div>
+  </div>
+
+  <!-- Page 11: Misconfigurations - Deprecated SSL/TLS Protocols -->
+  <div class="report-page content-page" id="misconfigurations-page-6">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Misconfigurations (Cont.)</span>
+    </div>
+    <h4>Deprecated SSL/TLS Protocols Detected</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Deprecated SSL/TLS Protocol Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/software/saytime/</code></li>
+        <li><strong>Description:</strong> Supports deprecated protocols: TLS 1.0, TLS 1.1.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable deprecated protocols. Enforce TLS 1.2 or higher.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Deprecated SSL/TLS Protocol Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/licensemaker/special.html</code></li>
+        <li><strong>Description:</strong> Supports deprecated protocols: TLS 1.0, TLS 1.1.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable deprecated protocols. Enforce TLS 1.2 or higher.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Deprecated SSL/TLS Protocol Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://www.acme.com/license.html</code></li>
+        <li><strong>Description:</strong> Supports deprecated protocols: TLS 1.0, TLS 1.1.</li>
+        <li><strong>First Seen:</strong> 2024-07-06</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable deprecated protocols. Enforce TLS 1.2 or higher.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Deprecated SSL/TLS Protocol Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>23.93.106.140:443/tcp</code></li>
+        <li><strong>Description:</strong> Supports deprecated protocols: TLS 1.0, TLS 1.1.</li>
+        <li><strong>First Seen:</strong> 2024-05-22</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable deprecated protocols. Enforce TLS 1.2 or higher.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Deprecated SSL/TLS Protocol Detected</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity:</strong> <code>https://104.223.136.79:443</code></li>
+        <li><strong>Description:</strong> Supports deprecated protocols: TLS 1.0, TLS 1.1.</li>
+        <li><strong>First Seen:</strong> 2024-08-11</li>
+        <li><strong>Category:</strong> Misconfiguration</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Disable deprecated protocols. Enforce TLS 1.2 or higher.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-5" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#vulnerabilities-page-1" class="next-chapter">NEXT: VULNERABILITIES &rarr;</a>
+      <span>Page 11</span>
+    </div>
+  </div>
+
+  <!-- Page 12: Potential Vulnerabilities -->
+  <div class="report-page content-page" id="vulnerabilities-page-1">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Potential Vulnerabilities</span>
+    </div>
+    <h3 id="vulnerabilities-intro">Potential Vulnerabilities</h3>
+    <h4>HTTP Server Server-Side Request Forgery (SSRF) (Inferred CVE-2021-40438)</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> HTTP Server SSRF (Inferred CVE-2021-40438)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-1">1 (Critical)</span></li>
+        <li><strong>Entity:</strong> <code>http://root.acme.com:80</code></li>
+        <li><strong>Description:</strong> Inferred CVE-2021-40438 based on Apache HTTP Server 2.4.5. Affects Apache 2.4.48 and earlier.</li>
+        <li><strong>First Seen:</strong> 2024-05-14</li>
+        <li><strong>Category:</strong> Vulnerability</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Investigate and confirm. If present, upgrade Apache or apply mitigations.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> HTTP Server SSRF (Inferred CVE-2021-40438)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-1">1 (Critical)</span></li>
+        <li><strong>Entity:</strong> <code>https://85.10.225.138:443</code></li>
+        <li><strong>Description:</strong> Inferred CVE-2021-40438 based on Apache HTTP Server 2.4.5. Affects Apache 2.4.48 and earlier.</li>
+        <li><strong>First Seen:</strong> 2024-05-14</li>
+        <li><strong>Category:</strong> Vulnerability</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Investigate and confirm. If present, upgrade Apache or apply mitigations.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> HTTP Server SSRF (Inferred CVE-2021-40438)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-1">1 (Critical)</span></li>
+        <li><strong>Entity:</strong> <code>https://root.acme.com:443</code></li>
+        <li><strong>Description:</strong> Inferred CVE-2021-40438 based on Apache HTTP Server 2.4.5. Affects Apache 2.4.48 and earlier.</li>
+        <li><strong>First Seen:</strong> 2024-05-14</li>
+        <li><strong>Category:</strong> Vulnerability</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Investigate and confirm. If present, upgrade Apache or apply mitigations.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> HTTP Server SSRF (Inferred CVE-2021-40438)</li>
+        <li><strong>Severity:</strong> <span class="severity severity-1">1 (Critical)</span></li>
+        <li><strong>Entity:</strong> <code>http://85.10.225.138:80</code></li>
+        <li><strong>Description:</strong> Inferred CVE-2021-40438 based on Apache HTTP Server 2.4.5. Affects Apache 2.4.48 and earlier.</li>
+        <li><strong>First Seen:</strong> 2024-05-14</li>
+        <li><strong>Category:</strong> Vulnerability</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Investigate and confirm. If present, upgrade Apache or apply mitigations.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#misconfigurations-page-6" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#leaks-page-1" class="next-chapter">NEXT: INFO LEAKS &rarr;</a>
+      <span>Page 12</span>
+    </div>
+  </div>
+
+  <!-- Page 13: Information Leaks & Reconnaissance - Suspicious Domains -->
+  <div class="report-page content-page" id="leaks-page-1">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Information Leaks & Reconnaissance</span>
+    </div>
+    <h3 id="leaks-intro">Information Leaks & Reconnaissance Findings</h3>
+    <h4>Suspicious Domains</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.ar</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.ar</code> resolved to <code>174.136.29.220</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>aame.com</code>)</li>
+        <li><strong>Description:</strong> Typo domain <code>aame.com</code>. Potential typosquatting/phishing. (No resolution info in this JSON for this specific entry).</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme-finance.com</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme-finance.com</code> resolved to <code>168.62.224.13</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acmecorp.com</code> (Suspicious: <code>acmecorpcom.cm</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acmecorpcom.cm</code> resolved to <code>208.91.112.55</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-09-28</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#vulnerabilities-page-1" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#leaks-page-2" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 13</span>
+    </div>
+  </div>
+
+  <!-- Page 14: Information Leaks & Reconnaissance - Suspicious Domains (Cont.) -->
+  <div class="report-page content-page" id="leaks-page-2">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Information Leaks & Reconnaissance (Cont.)</span>
+    </div>
+    <h4>Suspicious Domains (Continued)</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acmecorp.com</code> (Suspicious: <code>acmecorp.cm</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acmecorp.cm</code> resolved to <code>208.91.112.55</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-10-03</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.ag</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.ag</code> resolved to <code>206.188.193.161</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.expert</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.expert</code> resolved to <code>13.248.213.45, 76.223.67.189</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.software</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.software</code> resolved to CNAME <code>77980.bodis.com</code> / IP <code>199.59.243.227</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#leaks-page-1" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#leaks-page-3" class="next-chapter">NEXT PAGE &rarr;</a>
+      <span>Page 14</span>
+    </div>
+  </div>
+
+   <!-- Page 15: Information Leaks & Reconnaissance - Suspicious Domains (Cont.) & Mobile Apps -->
+  <div class="report-page content-page" id="leaks-page-3">
+    <div class="content-page-header">
+      <span class="page-section-title">02 Top Attack Surface Exposures / Information Leaks & Reconnaissance (Cont.)</span>
+    </div>
+    <h4>Suspicious Domains (Continued)</h4>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.pet</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.pet</code> resolved to <code>76.223.67.189, 13.248.213.45</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-09-09</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acmecorp.com</code> (Suspicious: <code>acmecorp.site</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acmecorp.site</code> resolved to <code>15.197.240.20</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acmecorp.com</code> (Suspicious: <code>acmecorpe.com</code>)</li>
+        <li><strong>Description:</strong> Typo domain <code>acmecorpe.com</code>. Potential typosquatting/phishing. (No resolution info in this JSON for this specific entry).</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+     <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Suspicious Domain</li>
+        <li><strong>Severity:</strong> <span class="severity severity-2">2 (High)</span></li>
+        <li><strong>Entity (Parent):</strong> <code>acme.com</code> (Suspicious: <code>acme.africa</code>)</li>
+        <li><strong>Description:</strong> Morphed domain <code>acme.africa</code> resolved to <code>5.134.8.144</code>. Potential typosquatting/phishing.</li>
+        <li><strong>First Seen:</strong> 2024-05-13</li>
+        <li><strong>Category:</strong> Leak</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify malicious use. Consider defensive registration, monitoring, takedown.</div>
+    </div>
+    <h4>Publicly Discoverable Android Mobile Applications</h4>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Android Mobile App Found</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity (Keyword):</strong> <code>acme</code> (App: <code>com.popcornvan.app</code>)</li>
+        <li><strong>Description:</strong> App "Feed app - Grocery delivery" by "Feed Technologies, Inc." found matching keyword "acme". Details: 10K+ downloads, version 6.13.1. Legitimacy to be verified.</li>
+        <li><strong>First Seen:</strong> 2024-08-21</li>
+        <li><strong>Category:</strong> Threat</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify legitimacy. If unauthorized/malicious, request takedown from Google Play Store.</div>
+    </div>
+    <div class="finding-item">
+      <ul>
+        <li><strong>Finding:</strong> Android Mobile App Found</li>
+        <li><strong>Severity:</strong> <span class="severity severity-5">5 (Low)</span></li>
+        <li><strong>Entity (Keyword):</strong> <code>acme</code> (App: <code>br.com.marcoscnc.roscasmaximus</code>)</li>
+        <li><strong>Description:</strong> App "Roscas Maximus" by "Marcos Cnc" found matching keyword "acme". Details: 500+ downloads, version 2.23, price $8.49. Legitimacy to be verified.</li>
+        <li><strong>First Seen:</strong> 2024-09-04</li>
+        <li><strong>Category:</strong> Threat</li>
+      </ul>
+      <div class="remediation-box"><strong>Remediation:</strong> Verify legitimacy. If unauthorized/malicious, request takedown from Google Play Store.</div>
+    </div>
+    <div class="page-footer">
+      <a href="#leaks-page-2" class="next-chapter">&larr; PREVIOUS PAGE</a>
+      <a href="#conclusion" class="next-chapter">NEXT: CONCLUSION &rarr;</a>
+      <span>Page 15</span>
+    </div>
+  </div>
+
+  <!-- Page 16: Conclusion -->
+  <div class="report-page section-intro-page" id="conclusion">
+    <div class="section-logo-placeholder-area"></div>
+    <div class="section-main-title">CONCLUSION</div>
+
+    <p class="section-intro-text">The comprehensive analysis of ACME Corp's internet-facing attack surface, detailed in this report, reveals a landscape with significant and varied risks that demand immediate and sustained attention. The sheer volume of misconfigurations is a primary concern: exposed FTP services (e.g., `173.254.223.253:21/tcp` and `173.254.223.252:21/tcp`) and MySQL databases (e.g., `173.254.223.252:3306/tcp` and `173.254.223.253:3306/tcp`) offer direct pathways for attackers. Compounding this are insecure HTTP redirect patterns across multiple assets (affecting `http://23.228.86.241:2087`, `http://mail.acmecorp.com:2087`, `http://104.223.136.79:80`, `http://23.228.86.241:2083`, and `http://mail.acmecorp.com:2083`), widespread use of weak SSL/TLS ciphers (such as RC4 and DES-CBC3-SHA on numerous `https://www.acme.com/software/*` endpoints, `https://104.223.136.79:443`, `https://mail.acmecorp.com:443`, and `23.93.106.140:443/tcp`) and deprecated protocols (TLS 1.0/1.1 on similar entities), and critical failures in certificate management. Specifically, self-signed certificates (like on `https://173.254.223.252:443` for "acmeimages.com," which was also expired) and other expired or imminently expiring certificates (e.g., <code>https://23.228.86.241:443</code> for `*.oodda.com`) were noted, alongside an exposed directory listing on `https://173.254.223.252:443`.</p>
+    <p class="section-intro-text">The critical-severity inferred Server-Side Request Forgery (SSRF) vulnerability (CVE-2021-40438) identified on at least four Apache HTTP server instances (including <code>https://85.10.225.138:443</code>, <code>http://root.acme.com:80</code>, <code>https://root.acme.com:443</code>, and <code>http://85.10.225.138:80</code>) represents an urgent threat requiring immediate patching or mitigation. Furthermore, the substantial number of suspicious domains (twelve examples such as <code>acme.ar</code>, <code>acme-finance.com</code>, <code>acmecorp.cm</code>, <code>aame.com</code>, <code>acme.ag</code>, <code>acme.expert</code>, <code>acme.software</code>, <code>acme.pet</code>, <code>acmecorp.site</code>, <code>acmecorpe.com</code>, and <code>acme.africa</code>) and publicly discoverable Android mobile applications ("Feed app - Grocery delivery" [<code>com.popcornvan.app</code>], "Roscas Maximus" [<code>br.com.marcoscnc.roscasmaximus</code>]) potentially leveraging the "acme" brand underscore a significant risk from phishing, brand abuse, and malware distribution vectors.</p>
+     <p class="section-intro-text">Addressing these specific, enumerated exposures through diligent remediation and the adoption of a robust, continuous attack surface management program is paramount. This includes not only fixing individual issues but also overhauling configuration management, certificate lifecycle processes, vulnerability management, and brand protection strategies. By taking decisive action on these findings, ACME Corp can substantially reduce its digital risk and enhance its resilience against the evolving cyber threat landscape.</p>
+
+    <div class="section-number-large">03</div>
+    <div class="page-footer">
+      <a href="#leaks-page-3" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#detailed-recommendations" class="next-chapter">NEXT CHAPTER &rarr;</a>
+      <span>Page 16</span>
+    </div>
+  </div>
+
+  <!-- Page 17: Recommendations (Detailed - Section Intro & Part 1) -->
+  <div class="report-page section-intro-page" id="detailed-recommendations">
+    <div class="section-logo-placeholder-area"></div>
+    <div class="section-main-title">RECOMMENDATIONS</div>
+    <div class="section-main-subtitle">(DETAILED)</div>
+
+    <ol style="color: #d0d0d0; font-size: 1.0em; max-width: 95%;">
+      <li><strong>Secure Network Services:</strong>
+        <ul>
+          <li><strong>FTP Services</strong> (<code>173.254.223.252:21/tcp</code>, <code>173.254.223.253:21/tcp</code>): Restrict public access immediately. Migrate to SFTP or FTPS for encrypted file transfers. Disable anonymous FTP if not essential.</li>
+          <li><strong>MySQL Database Services</strong> (<code>173.254.223.252:3306/tcp</code>, <code>173.254.223.253:3306/tcp</code>): Restrict public access. If external access is unavoidable, limit to trusted IP addresses via firewall rules, enforce strong, unique credentials, enable encryption in transit (SSL/TLS for MySQL), and keep MySQL regularly patched.</li>
+        </ul>
+      </li>
+      <li><strong>Strengthen Web Security Configurations:</strong>
+        <ul>
+          <li><strong>Insecure Redirects</strong> (e.g., <code>http://23.228.86.241:2087</code>, <code>http://mail.acmecorp.com:2087</code>, <code>http://104.223.136.79:80</code>, <code>http://23.228.86.241:2083</code>, <code>http://mail.acmecorp.com:2083</code>): Ensure all web traffic, including redirects and all elements within redirect chains, utilize HTTPS. Implement HTTP Strict Transport Security (HSTS) to compel browsers to use HTTPS. Review redirect logic to ensure secure final destinations.</li>
+          <li><strong>Weak SSL/TLS Ciphers & Protocols</strong> (Numerous entities including <code>https://www.acme.com/software/*</code> [e.g., <code>pbmplus/</code>, <code>thumbnail_index/</code>, <code>file_date/</code>, <code>planimeter.jsm</code>, <code>jef/religion_sex/</code>, <code>javascript/acme.suggestions.html</code>, <code>labelmaker/</code>, <code>licensemaker/licenses.cgi</code>], <code>https://104.223.136.79:443</code>, <code>https://mail.acmecorp.com:443</code>, <code>23.93.106.140:443/tcp</code>; Deprecated Protocols also on <code>https://www.acme.com/software/saytime/</code>, <code>licensemaker/special.html</code>, <code>license.html</code>): Globally reconfigure all web servers and SSL/TLS-terminating devices to disable weak cipher suites (e.g., RC4, DES-CBC3-SHA, MD5-based) and deprecated protocols (SSLv2, SSLv3, TLS 1.0, TLS 1.1). Prioritize TLS 1.2 and TLS 1.3 with strong cipher suites (e.g., AES-GCM) that support Perfect Forward Secrecy (PFS). Regularly audit configurations.</li>
+         <li><strong>Directory Listings</strong> (<code>https://173.254.223.252:443</code>): Disable directory listing functionality on all web servers to prevent inadvertent information disclosure. Ensure default "deny" configurations.</li>
+        </ul>
+      </li>
+       <li><strong>Improve Certificate Lifecycle Management:</strong>
+        <ul>
+          <li><strong>Self-Signed Certificates</strong> (<code>https://173.254.223.252:443</code> for "acmeimages.com"): Replace all self-signed certificates on public-facing systems with certificates issued by a trusted Certificate Authority (CA).</li>
+          <li><strong>Expired/Almost Expired Certificates</strong> (<code>https://173.254.223.252:443</code> [expired for acmeimages.com], <code>http://23.228.86.241:2083</code> [for la-13.oodda.com], <code>https://23.228.86.241:443</code> [for *.oodda.com]): Immediately renew expired certificates and proactively renew those nearing expiration. Implement a centralized certificate inventory, automated renewal processes, and robust alerting for impending expirations.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="section-number-large">04</div>
+    <div class="page-footer">
+      <a href="#conclusion" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#detailed-recommendations-p2" class="next-chapter">NEXT CHAPTER &rarr;</a>
+      <span>Page 17</span>
+    </div>
+  </div>
+
+  <!-- Page 18: Recommendations (Detailed - Part 2) -->
+  <div class="report-page content-page" id="detailed-recommendations-p2">
+     <div class="content-page-header">
+      <span class="page-section-title">04 Recommendations (Detailed - Cont.)</span>
+    </div>
+    <ol start="4" style="color: #d0d0d0; font-size: 1.0em;  max-width: 95%;">
+       <li><strong>Vulnerability Management & Patching:</strong>
+        <ul>
+          <li><strong>SSRF (CVE-2021-40438)</strong> (<code>http://root.acme.com:80</code>, <code>https://85.10.225.138:443</code>, <code>https://root.acme.com:443</code>, <code>http://85.10.225.138:80</code>): Urgently investigate all Apache servers running version 2.4.48 or older (identified as 2.4.5 in findings). Confirm the vulnerability and, if present, upgrade to Apache HTTP Server 2.4.49+ or apply vendor-prescribed mitigations without delay. Implement regular vulnerability scanning and a robust patch management program for all internet-facing systems, prioritizing critical web server software.</li>
+        </ul>
+      </li>
+      <li><strong>Domain & Brand Protection:</strong>
+        <ul>
+          <li><strong>Suspicious Domains</strong> (e.g., <code>acme.ar</code>, <code>aame.com</code>, <code>acme-finance.com</code>, <code>acmecorpcom.cm</code>, <code>acmecorp.cm</code>, <code>acme.ag</code>, <code>acme.expert</code>, <code>acme.software</code>, <code>acme.pet</code>, <code>acmecorp.site</code>, <code>acmecorpe.com</code>, <code>acme.africa</code>): Actively monitor all 12 identified suspicious domains for malicious activity such as phishing sites, malware distribution, or brand impersonation. Prioritize investigation based on resolution status and observed content. Consider defensive registration of common typos and geographically relevant TLD variations of primary domains. Initiate takedown procedures through registrars or hosting providers for any confirmed malicious domains.</li>
+          <li><strong>Mobile Application Monitoring</strong> ("Feed app - Grocery delivery" [<code>com.popcornvan.app</code>], "Roscas Maximus" [<code>br.com.marcoscnc.roscasmaximus</code>]): Verify the legitimacy of any mobile applications using the "ACME" brand or keywords. For unauthorized or impersonating apps, request takedowns from app store providers (Google Play Store in these cases). Establish a process for ongoing monitoring of app stores for new apps misusing the ACME brand.</li>
+        </ul>
+      </li>
+      <li><strong>Implement Continuous Monitoring & Asset Management:</strong>
+        <p style="font-size:0.9em; color: #b0b0b0;">Regularly scan for and inventory all internet-facing assets, including subdomains, IP addresses, open ports, and associated services. Employ attack surface management (ASM) tools to gain continuous visibility into both known and unknown assets, including shadow IT and cloud resources. This allows for proactive identification and remediation of new exposures and changes to existing assets.</p>
+      </li>
+      <li><strong>Security Best Practices & Awareness:</strong>
+         <p style="font-size:0.9em; color: #b0b0b0;">Consistently review and update system and network configurations against industry best practices (e.g., CIS Benchmarks) and vendor security guidelines. Implement Multi-Factor Authentication (MFA) on all critical systems, administrative interfaces (e.g., cPanel, WHM if suggested by ports like 2083/2087), and remote access points. Conduct regular security awareness training for all employees to help them recognize and report phishing attempts, suspicious websites, and other social engineering tactics, especially in light of the typosquatting domain risks identified.</p>
+      </li>
+    </ol>
+    <div class="page-footer">
+      <a href="#detailed-recommendations" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#methodology" class="next-chapter">NEXT CHAPTER &rarr;</a>
+      <span>Page 18</span>
+    </div>
+  </div>
+
+  <!-- Page 19: Methodology -->
+  <div class="report-page section-intro-page" id="methodology">
+    <div class="section-logo-placeholder-area"></div>
+    <div class="section-main-title">METHODOLOGY</div>
+
+    <p class="section-intro-text">The findings in this report are based on an analysis of publicly accessible internet assets and services associated with ACME Corp. Data was collected throughout 2024 using various automated and manual reconnaissance techniques to identify active hosts, open ports, running services, and potential misconfigurations or vulnerabilities. This included DNS enumeration, port scanning, web application crawling, SSL/TLS certificate analysis, software fingerprinting, and lookup of publicly available information (e.g., app stores, domain registration data). Where applicable, vulnerability information, such as CVE-2021-40438, is correlated with known Common Vulnerabilities and Exposures (CVEs), primarily through inference based on identified software versions or service banners. The "First Seen" and "Last Seen" dates, present in the underlying JSON data for each finding, indicate the observation window for specific issues by the monitoring system, though this report provides a consolidated view as of the latest analysis. Each identified issue in the source data includes details such as severity, description, affected entity, and recommended remediation steps based on the available information. Severity ratings (Critical, High, Medium, Low/Informational) are assigned based on potential impact, exploitability, and the context of the exposure.</p>
+
+    <div class="section-number-large">05</div>
+    <div class="page-footer">
+      <a href="#detailed-recommendations-p2" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <a href="#back-page" class="next-chapter">END OF REPORT &rarr;</a>
+      <span>Page 19</span>
+    </div>
+  </div>
+
+  <!-- Page 20: Back Page / Contact Info -->
+  <div class="report-page back-page" id="back-page">
+    <div class="content-wrapper"> <!-- Added wrapper for content to handle potential overflow -->
+        <div class="main-logo-placeholder-area">
+          <h1 style="font-size: 2.5em; color: #4CAF50; margin:0; border: 2px solid #4CAF50; padding: 10px 20px; display: inline-block;">ACME CORP</h1>
+        </div>
+
+        <h3>About ACME Corp</h3>
+        <p>ACME Corp is a leading innovator in providing advanced technological solutions. We are committed to maintaining the highest standards of security and operational integrity to protect our assets and customer data.</p>
+
+        <h3>About This Report</h3>
+        <p>This Attack Surface Threat Report was compiled by the ACME Corp Cybersecurity Division. It aims to provide a clear overview of observable risks and actionable intelligence to enhance our security posture. This document is intended for internal use and is confidential.</p>
+
+        <div class="contact-info">
+          <h3>Contact & Further Information</h3>
+          <p>
+            For questions regarding this report or ACME Corp's security practices, please contact:<br>
+            Email: security@acme.com<br>
+            Internal Portal: ACME Corp Security Portal
+          </p>
+        </div>
+    </div>
+    <div class="final-footer-text">
+      &copy; 2024 ACME Corp Attack Surface Management Report. Confidential.
+      <br>Report Style Inspiration: Unit42.
+    </div>
+     <div class="page-footer" style="position:absolute; bottom: 20mm; left: 20mm; right:20mm; width: calc(210mm - 40mm); border-top: none; box-sizing: border-box;"> <!-- Ensured absolute positioning for this specific footer -->
+      <a href="#methodology" class="next-chapter">&larr; PREVIOUS CHAPTER</a>
+      <span>&nbsp;</span>
+      <span>Page 20</span>
+    </div>
+  </div>
+
+</body>
+</html>
