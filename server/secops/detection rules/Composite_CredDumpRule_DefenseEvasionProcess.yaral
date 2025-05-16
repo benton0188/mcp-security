@@ -1,0 +1,47 @@
+rule Composite_CredDumpRule_DefenseEvasionProcess {
+  meta:
+    author = "Cline"
+    description = "Detects a credential dumping rule alert followed by a defense evasion process launch on the same host within 1 hour."
+    severity = "CRITICAL"
+    priority = "HIGH"
+
+  events:
+    // Event 1: Credential Dumping via Rule Detection
+    $cred_dump_rule.metadata.product_event_type = "RULE_DETECTION" and
+    (
+      $cred_dump_rule.security_result.rule_name = "NTDS.dit Extraction via Windows Volume Shadow Copy" or
+      $cred_dump_rule.security_result.rule_name = "Reg Save Hklm Sam Ss Dat" or
+      $cred_dump_rule.security_result.rule_name = "Reg Save Hklm System Sy.Dat"
+    ) and
+    $cred_dump_rule.principal.hostname = $hostname // Link to match variable
+
+    // Event 2: Defense Evasion via Process Launch
+    $defense_evasion_process.metadata.event_type = "PROCESS_LAUNCH" and
+    re.regex($defense_evasion_process.principal.process.command_line, `rundll32\.exe`) and
+    // Optional: Add strlen check if needed: strlen($defense_evasion_process.principal.process.file.full_path) > 100 and
+    $defense_evasion_process.principal.hostname = $hostname // Link to match variable
+
+  match:
+    // Define hostname as the key to join events over the time window
+    $hostname over 24h
+
+  outcome:
+    // Aggregate values as multiple events might match the same host over the window
+    // Combine risk scores (example: max rule score + fixed bonus for process correlation)
+    // Adjust field name 'risk_score' if different in your UDM.
+    $combined_risk_score = max($cred_dump_rule.security_result.risk_score + 30) // Using max aggregation
+
+    // Extract distinct rule name(s) and process info
+    $credential_dumping_rule_name = array_distinct($cred_dump_rule.security_result.rule_name)
+    $evasion_command_line = array_distinct($defense_evasion_process.principal.process.command_line)
+    $evasion_process_path = array_distinct($defense_evasion_process.principal.process.file.full_path)
+
+    // Extract distinct MITRE Tactic(s) from rule if available (adjust field name 'rule_labels' if needed)
+    $mitre_tactic_cred_dump = array_distinct($cred_dump_rule.security_result.rule_labels["tactic"])
+    // Note: Process launch event likely won't have direct MITRE labels like a rule detection.
+    // Consider adding T1218.011 (Rundll32) manually or based on command line analysis if needed.
+
+  condition:
+    // Require both events for the same hostname within the match window
+    $cred_dump_rule and $defense_evasion_process
+}
