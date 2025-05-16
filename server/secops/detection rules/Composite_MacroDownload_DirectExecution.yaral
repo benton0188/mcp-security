@@ -1,0 +1,40 @@
+rule Composite_MacroDownload_DirectExecution {
+  meta:
+    author = "Cline"
+    description = "Detects process execution of a file hash known to be downloaded via an Office macro alert, occurring on the same host and potentially same user."
+    severity = "HIGH"
+    priority = "MEDIUM"
+
+  events:
+    // Event 1: Executable downloaded via Macro alert
+    // Assuming target.file.sha256 contains the hash in the rule detection event UDM
+    $macro_download.metadata.product_event_type = "RULE_DETECTION" and
+    $macro_download.security_result.rule_name = "demoverse_user_download_executable_from_macro" and
+    $macro_download.principal.hostname = $hostname and
+    $macro_download.principal.user.userid = $user and // Optional user correlation
+    $macro_download.target.file.sha256 = $downloaded_hash
+
+    // Event 2: Execution of the downloaded file (detected by hash)
+    $execution.metadata.event_type = "PROCESS_LAUNCH" and
+    $execution.principal.process.file.sha256 = $downloaded_hash and
+    $execution.principal.hostname = $hostname and
+    $execution.principal.user.userid = $user // Optional user correlation
+
+  match:
+    // Correlate over hostname, user (optional), and the specific file hash within 30 minutes
+    $hostname, $user, $downloaded_hash over 30m
+
+  outcome:
+    // Aggregate values as multiple events might match the same host/user/hash over the window
+    $macro_rule_name = array_distinct($macro_download.security_result.rule_name)
+    $executed_process_path = array_distinct($execution.principal.process.file.full_path)
+    $executed_command_line = array_distinct($execution.principal.process.command_line)
+
+    // Example risk score - adjust as needed
+    // Removed coalesce due to parser issues. Handle potential null risk_score downstream if necessary.
+    $combined_risk_score = max($macro_download.security_result.risk_score) + 40 // Base score + bonus
+
+  condition:
+    // Require both events for the same host, user (optional), and hash within the match window
+    $macro_download and $execution
+}
