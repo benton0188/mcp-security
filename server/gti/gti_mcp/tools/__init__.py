@@ -18,3 +18,4 @@ from .netloc import *
 from .threat_profiles import *
 from .urls import *
 from .asm import get_asm_issue_details, search_asm_issues
+from .dtm import list_dtm_alerts
