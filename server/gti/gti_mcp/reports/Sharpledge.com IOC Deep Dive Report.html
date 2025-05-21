@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep IOC Analysis: sharpledge.com</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #00332e; /* Dark Green Background */
+            color: #E0E0E0; /* Off-white text */
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .page-container {
+            min-height: 95vh; /* Approximate page height */
+            padding: 40px;
+            margin-bottom: 20px; /* Space between "pages" */
+            border-bottom: 1px dashed #005f4a; /* Visual separator for pages */
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .page-container:last-child {
+            border-bottom: none;
+        }
+
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            background: #00332e radial-gradient(circle at 30% 30%, #005f4a30 0%, #00332e 70%),
+                        radial-gradient(circle at 70% 70%, #006f5a40 0%, #00332e 60%);
+            color: #FFFFFF;
+        }
+
+        .cover-page h1 {
+            font-size: 2.8em;
+            font-weight: bold;
+            margin-bottom: 0.2em;
+            color: #FFFFFF;
+        }
+
+        .cover-page h2 {
+            font-size: 2em;
+            font-weight: normal;
+            margin-top: 0;
+            color: #E0E0E0;
+        }
+
+        .cover-page p {
+            font-size: 1.3em;
+            margin-top: 2em;
+        }
+
+        .logo-placeholder {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #A0E0A0; /* Light green accent */
+            margin-bottom: 80px;
+        }
+
+        .cover-page .logo-placeholder {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+        }
+
+
+        h1, h2, h3 {
+            color: #FFFFFF;
+        }
+
+        h2.section-title {
+            font-size: 1.8em;
+            font-weight: normal;
+            border-bottom: 2px solid #A0E0A0;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2.section-title strong {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        h3.box-title {
+            margin-top: 0;
+            color: #A0E0A0; /* Light green accent */
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .content-box {
+            background-color: #004d40; /* Slightly Lighter Dark Green for boxes */
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        
+        .content-box p, .content-box ul, .content-box li {
+            color: #E0E0E0;
+        }
+
+        .content-box strong {
+            color: #FFFFFF;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 25px;
+        }
+
+        ul.monospace-list li {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            word-break: break-all;
+        }
+        
+        .toc-table {
+            width: 100%;
+            font-size: 1.1em;
+            border-spacing: 0 15px; /* Vertical spacing between rows */
+        }
+
+        .toc-table td {
+            vertical-align: top;
+        }
+
+        .toc-table .toc-number {
+            width: 5%;
+            font-weight: bold;
+            color: #A0E0A0;
+        }
+
+        .toc-table .toc-desc {
+            font-size: 0.9em;
+            color: #CCCCCC;
+        }
+
+        .page-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            font-size: 0.85em;
+            color: #AAAAAA;
+        }
+
+        .icon-placeholder {
+            font-weight: bold;
+            color: #A0E0A0;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .executive-overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .domain-intelligence-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .domain-intelligence-grid .full-width-box {
+            grid-column: 1 / -1; /* Span across all columns */
+        }
+
+
+        .dns-intelligence-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .dns-intelligence-grid .content-box ul {
+             columns: 1; /* For better readability, ensure single column */
+        }
+
+        .file-url-intelligence .monospace-list {
+            list-style-type: square;
+        }
+
+        .threat-association-box {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .threat-association-box .icon-area {
+            margin-right: 20px;
+            font-size: 1.5em; /* Make icon placeholder larger */
+        }
+
+        .threat-association-box .details-area {
+            flex-grow: 1;
+        }
+        .threat-association-box h3.box-title {
+           font-size: 1.4em;
+        }
+        .threat-association-box table {
+            width: 100%;
+            font-size:0.95em;
+            margin-bottom:10px;
+        }
+         .threat-association-box table td:first-child {
+            width: 150px;
+            font-weight: bold;
+        }
+        .risk-bar {
+            font-size:0.8em;
+            display: inline-block;
+            height: 1em;
+            margin-right: 5px;
+        }
+        .risk-bar-high { background-color: red; color: red; }
+        .risk-bar-medium-high { background-color: orange; color: orange; }
+
+        .text-highlight-yellow { color: yellow; }
+        .text-highlight-red { color: red; }
+        .text-highlight-orange { color: orange; }
+        .text-highlight-lightgreen { color: #A0E0A0; }
+
+        hr.separator {
+            border: 0;
+            height: 1px;
+            background-color: #006f4a;
+            margin: 15px 0;
+        }
+        
+        .disclaimer-page .logo-placeholder {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .disclaimer-page {
+            padding-top: 80px; /* More space at top for logo */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .executive-overview-grid,
+            .domain-intelligence-grid,
+            .dns-intelligence-grid {
+                grid-template-columns: 1fr; /* Stack columns on smaller screens */
+            }
+            .page-container {
+                padding: 20px;
+            }
+            .cover-page h1 { font-size: 2em; }
+            .cover-page h2 { font-size: 1.5em; }
+            .cover-page p { font-size: 1em; }
+            h2.section-title { font-size: 1.5em; }
+
+            .page-footer {
+                left: 20px;
+                bottom: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Page 1: Cover Page -->
+    <div class="page-container cover-page">
+        <div class="logo-placeholder">GCTA</div>
+        <div>
+            <h1>Deep IOC Analysis</h1>
+            <h2>Indicator: sharpledge.com</h2>
+            <p>Date: 2025-05-20</p>
+        </div>
+    </div>
+
+    <!-- Page 2: Table of Contents -->
+    <div class="page-container">
+        <h2 class="section-title">Table of contents</h2>
+        <table class="toc-table">
+            <tr>
+                <td class="toc-number">1</td>
+                <td>
+                    <strong>Executive Overview</strong><br>
+                    <span class="toc-desc">High-level assessment of sharpledge.com, key findings, and associated risks.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="toc-number">2</td>
+                <td>
+                    <strong>Domain Intelligence</strong><br>
+                    <span class="toc-desc">Registration details, WHOIS information, HTTPS certificate analysis, and initial threat scoring.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="toc-number">3</td>
+                <td>
+                    <strong>DNS Intelligence</strong><br>
+                    <span class="toc-desc">Historical IP resolutions and observed subdomains associated with sharpledge.com.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="toc-number">4</td>
+                <td>
+                    <strong>File & URL Intelligence</strong><br>
+                    <span class="toc-desc">Files communicating with, downloaded from, or referring to the domain, and related URLs.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="toc-number">5</td>
+                <td>
+                    <strong>Threat Actor & Malware Associations</strong><br>
+                    <span class="toc-desc">Connections to known threat actors, campaigns, and malware families.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="toc-number">6</td>
+                <td>
+                    <strong>Risk Analysis & Conclusion</strong><br>
+                    <span class="toc-desc">Consolidated risk profile, impact assessment, and concluding remarks.</span>
+                </td>
+            </tr>
+        </table>
+        <div class="page-footer">2 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 3: Executive Overview -->
+    <div class="page-container">
+        <h2 class="section-title">Executive Overview | <strong>Analysis of sharpledge.com</strong></h2>
+        <p>This report provides a deep dive analysis of the domain <strong>sharpledge.com</strong>, focusing on its infrastructure, associated indicators, and connections to known cyber threat activities as of May 20, 2025.</p>
+
+        <div class="executive-overview-grid">
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: Target]</span> Primary Association</h3>
+                <p><strong>Threat Actor:</strong> APT29 (Cozy Bear, Nobelium, Midnight Blizzard)</p>
+                <p><strong>Nature:</strong> Russian Nation-State Espionage Group</p>
+                <p><strong>Observed Role:</strong> Likely Command & Control (C2) and Phishing Infrastructure</p>
+                <p><strong>Mandiant IC Score:</strong> <span class="text-highlight-red">100 (Very High Risk)</span></p>
+            </div>
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: Warning]</span> Key Threat Indicators</h3>
+                <p><strong>VirusTotal Signals:</strong> Low direct detections but linked to malicious files & actors.</p>
+                <p><strong>Suspicious Certificate SAN:</strong> <code class="text-highlight-yellow">www.nt-pcstore.com</code>.</p>
+                <p><strong>Malware Link:</strong> STATICNOISE (APT29 Downloader).</p>
+                <p><strong>Campaigns:</strong> Diplomatic Phishing Operations (Ukraine, Czech Rep.).</p>
+            </div>
+        </div>
+
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: Lightbulb]</span> Highlights</h3>
+            <ul>
+                <li>The domain <strong>sharpledge.com</strong>, active since 2019, demonstrates strong and credible links to the sophisticated Russian state-sponsored threat actor APT29.</li>
+                <li>Despite a low direct threat score on some platforms like VirusTotal, its association with files flagged as malicious and its inclusion in collections attributed to APT29 and the STATICNOISE malware elevates its risk profile significantly.</li>
+                <li>The domain's infrastructure has shown dynamism, with ten historical IP resolutions, and hosts several subdomains that could support various malicious activities.</li>
+                <li>A notable Subject Alternative Name (SAN) <code class="text-highlight-yellow">www.nt-pcstore.com</code> in its HTTPS certificate suggests potential masquerading or shared infrastructure with unrelated, possibly benign-appearing, entities.</li>
+                <li>The domain is explicitly tied to APT29 campaigns focused on diplomatic phishing, highlighting its role in espionage operations.</li>
+            </ul>
+        </div>
+
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: Magnify]</span> Assessments</h3>
+            <ul>
+                <li>GCTA assesses with <strong>high confidence</strong> that sharpledge.com is a malicious domain utilized by APT29 as part of their cyber espionage operations.</li>
+                <li>GCTA assesses with <strong>moderate to high confidence</strong> that the domain has been actively used in phishing campaigns targeting diplomatic and governmental entities, particularly those detailed in association with APT29 campaigns.</li>
+                <li>The use of WHOIS privacy, coupled with dynamic IP infrastructure and potentially misleading SSL certificate details, are deliberate attempts at obfuscation.</li>
+            </ul>
+        </div>
+        <div class="page-footer">3 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 4: Domain Intelligence -->
+    <div class="page-container">
+        <h2 class="section-title">Indicator Intelligence | <strong>Domain Details</strong></h2>
+        <div class="domain-intelligence-grid">
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: GlobeID]</span> Registration Information</h3>
+                <p><strong>Domain:</strong> sharpledge.com</p>
+                <p><strong>Registration Date:</strong> 2019-09-13</p>
+                <p><strong>Expiration Date:</strong> 2025-09-13</p>
+                <p><strong>Registrar:</strong> NAMECHEAP INC</p>
+                <p><strong>Nameservers:</strong> ns1.afternic.com, ns2.afternic.com</p>
+                <p><strong>WHOIS Privacy:</strong> Enabled (Details Largely Redacted)</p>
+            </div>
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: CertLock]</span> Last HTTPS Certificate</h3>
+                <p><strong>Issuer:</strong> GoDaddy</p>
+                <p><strong>Valid Until:</strong> 2025-11-04</p>
+                <p><strong>Subject Alternative Names (SANs):</strong></p>
+                <ul>
+                    <li>sharpledge.com</li>
+                    <li><strong class="text-highlight-yellow">www.nt-pcstore.com</strong> (Notable unrelated SAN)</li>
+                </ul>
+            </div>
+            <div class="content-box full-width-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: ShieldChart]</span> Threat Scoring & Reputation</h3>
+                <p><strong>Mandiant IC Score:</strong> <span style="font-weight:bold; color: red;">100</span> (Very High Risk)</p>
+                <hr class="separator">
+                <p><strong>VirusTotal - Domain Severity:</strong> <span class="text-highlight-lightgreen">NONE</span></p>
+                <p style="font-size: 0.9em;"><em>Note: While direct severity is NONE, VirusTotal notes associations with bad communicating files and malicious collections/actors.</em></p>
+                <hr class="separator">
+                <p><strong>VirusTotal - Last Analysis Stats (Domain):</strong></p>
+                <ul style="font-size: 0.9em;">
+                    <li>Malicious: <span class="text-highlight-red">11</span></li>
+                    <li>Suspicious: <span class="text-highlight-yellow">2</span></li>
+                    <li>Undetected: 28</li>
+                    <li>Harmless: 53</li>
+                </ul>
+                <hr class="separator">
+                <p><strong>VirusTotal - Total Votes (Domain):</strong></p>
+                <ul style="font-size: 0.9em;">
+                    <li>Harmless: 1</li>
+                    <li>Malicious: <span class="text-highlight-red">1</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="page-footer">4 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 5: DNS Intelligence -->
+    <div class="page-container">
+        <h2 class="section-title">Indicator Intelligence | <strong>DNS Resolutions & Subdomains</strong></h2>
+        <div class="dns-intelligence-grid">
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: IPStack]</span> Historical IP Resolutions</h3>
+                <ul style="font-size: 0.9em;">
+                    <li>13.248.169.48</li>
+                    <li>76.223.54.146</li>
+                    <li>72.52.178.23</li>
+                    <li>199.59.243.227</li>
+                    <li>199.59.243.226</li>
+                    <li>51.75.210.218</li>
+                    <li>162.0.230.75</li>
+                    <li>66.42.116.212</li>
+                    <li>162.254.32.222</li>
+                    <li>34.133.73.143</li>
+                </ul>
+                <p style="font-size: 0.8em; margin-top: 10px;"><em>The multiple IP resolutions over time suggest dynamic infrastructure or parking services.</em></p>
+            </div>
+            <div class="content-box">
+                <h3 class="box-title"><span class="icon-placeholder">[ICON: NetDiagram]</span> Observed Subdomains</h3>
+                <ul style="font-size: 0.9em;">
+                    <li>ww7.sharpledge.com</li>
+                    <li>ww12.sharpledge.com</li>
+                    <li>apps.sharpledge.com</li>
+                    <li>adminer.sharpledge.com</li>
+                    <li>free.sharpledge.com</li>
+                    <li>wallace.sharpledge.com</li>
+                    <li>med.sharpledge.com</li>
+                    <li>dance.sharpledge.com</li>
+                    <li>mailhub.sharpledge.com</li>
+                    <li>reseller.sharpledge.com</li>
+                </ul>
+                <p style="font-size: 0.8em; margin-top: 10px;"><em>Subdomains like 'adminer', 'mailhub', and 'reseller' warrant further scrutiny.</em></p>
+            </div>
+        </div>
+        <div class="page-footer">5 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 6: File & URL Intelligence -->
+    <div class="page-container file-url-intelligence">
+        <h2 class="section-title">Indicator Intelligence | <strong>Associated Files & URLs</strong></h2>
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: FileCode]</span> Associated Files (SHA256 Hashes)</h3>
+            <p><strong>Communicating Files:</strong></p>
+            <ul class="monospace-list">
+                <li>`b84d6a12bb1756b69791e725b0e3d7a962888b31a8188de225805717c299c086`</li>
+                <li>`ece45b0ed87b6e956022a5e20582701b7f22c699d89c44144adde252515b0a66`</li>
+            </ul>
+            <br>
+            <p><strong>Downloaded Files:</strong></p>
+            <ul class="monospace-list">
+                <li>`6dc9c7fc93bb488bb0520a6c780a8d3c0fb5486a4711aca49b4c53fac7393023`</li>
+                <li>`32f2fa940d4b4fe19aca1e53a24e5aac29c57b7c5ee78588325b87f1b649c864`</li>
+            </ul>
+            <br>
+            <p><strong>Referrer Files:</strong></p>
+            <p style="font-size: 0.9em;">None found.</p>
+        </div>
+
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: LinkURL]</span> Related URLs</h3>
+            <p>URLs demonstrating attempts to access or utilize the domain, including common web paths:</p>
+            <ul>
+                <li>http://sharpledge.com/</li>
+                <li>https://sharpledge.com/</li>
+                <li>http://mail.sharpledge.com/</li>
+                <li>https://mail.sharpledge.com/</li>
+                <li>https://www.sharpledge.com/</li>
+                <li><strong class="text-highlight-yellow">https://sharpledge.com/login.php/</strong></li>
+                <li><strong class="text-highlight-yellow">http://sharpledge.com/login.php</strong></li>
+                <li><strong class="text-highlight-yellow">https://sharpledge.com/login.php</strong></li>
+                <li>http://sharpledge.com/pM%25 (Potentially malformed or specific payload path)</li>
+                <li><strong class="text-highlight-yellow">https://sharpledge.com/login.php_</strong> (Suspicious variant)</li>
+            </ul>
+            <p style="font-size: 0.8em; margin-top: 10px;"><em>The presence of multiple `login.php` variants is highly indicative of phishing or credential harvesting infrastructure.</em></p>
+        </div>
+        <div class="page-footer">6 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 7: Threat Actor & Malware Associations -->
+    <div class="page-container">
+        <h2 class="section-title">Threat Context | <strong>Known Associations</strong></h2>
+        <p>The domain "sharpledge.com" exhibits strong connections to the following threat entities and malware:</p>
+
+        <div class="content-box threat-association-box">
+            <div class="icon-area"><span class="icon-placeholder">[ICON: GovAPT]</span></div>
+            <div class="details-area">
+                <h3 class="box-title">APT29 (Cozy Bear, Nobelium, Midnight Blizzard)</h3>
+                <table>
+                    <tr><td>Category:</td><td>Nation-State (Russian Nexus)</td></tr>
+                    <tr><td>Motive:</td><td>Cyber Espionage, Intelligence Gathering</td></tr>
+                    <tr><td>Likelihood of Association:</td><td class="text-highlight-orange">High</td></tr>
+                    <tr><td>Potential Impact:</td><td class="text-highlight-red">Significant to Severe</td></tr>
+                </table>
+                <p style="font-size:0.9em">Risk Level: <span class="risk-bar risk-bar-high">||||||||||</span> <span class="text-highlight-red">High</span></p>
+                <p style="font-size: 0.95em;">A Russian nation-state sponsored cyber espionage group (ID: `threat-actor--7a39953e-0dae-569a-9d49-d52a4a8865b1`) known for targeting Western governments, diplomatic entities, research institutions, and other organizations of strategic interest. APT29 employs sophisticated TTPs, including targeted phishing campaigns and custom malware.</p>
+                <p style="font-size: 0.95em;"><strong>Associated Campaigns with sharpledge.com:</strong></p>
+                <ul style="font-size: 0.9em;">
+                    <li>`campaign--8d6e7115-c792-5ded-b0a9-81d10027a943`: "APT29 Conducts Phishing Campaign Targeting Multiple Ministries of Foreign Affairs"</li>
+                    <li>`alienvault_6511f107da5fed8d065d9477`: "Backchannel Diplomacy: APT29’s Rapidly Evolving Diplomatic Phishing Operations" (particularly focused on Ukraine and the Czech Republic).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-box threat-association-box">
+            <div class="icon-area"><span class="icon-placeholder">[ICON: MalwareBug]</span></div>
+            <div class="details-area">
+                <h3 class="box-title">STATICNOISE</h3>
+                <table>
+                    <tr><td>Category:</td><td>Malware (Downloader)</td></tr>
+                    <tr><td>Primary Actor:</td><td>APT29</td></tr>
+                    <tr><td>Likelihood of Association:</td><td class="text-highlight-orange">High</td></tr>
+                    <tr><td>Potential Impact:</td><td class="text-highlight-orange">Moderate to Significant (as enabler)</td></tr>
+                </table>
+                <p style="font-size:0.9em">Threat Level: <span class="risk-bar risk-bar-medium-high">|||||||---</span> <span class="text-highlight-orange">Moderate-High</span></p>
+                <p style="font-size: 0.95em;">A downloader malware (ID: `malware--58304da7-3d6a-5b8b-8924-b26673c4419e`) written in C++. STATICNOISE is assessed with high confidence to be utilized in APT29 operations to deliver secondary payloads and establish persistence on compromised systems.</p>
+                <p style="font-size: 0.9em;"><em>sharpledge.com has been identified in threat intelligence collections as infrastructure related to STATICNOISE C2 or distribution.</em></p>
+            </div>
+        </div>
+        <p style="font-size:0.85em; margin-top:15px;"><em>Other associated collections appear to be generic crowdsourced lists of malicious IOCs or placeholder entries and are not detailed further here.</em></p>
+        <div class="page-footer">7 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 8: Risk Analysis & Conclusion -->
+    <div class="page-container">
+        <h2 class="section-title">Analysis & Conclusion | <strong>sharpledge.com Risk Profile</strong></h2>
+        <div style="text-align:center; margin-bottom: 25px;">
+            <p style="font-size: 1.1em;">Overall Assessed Risk for <strong>sharpledge.com</strong>: <strong style="font-size:1.3em; color:red;">VERY HIGH</strong></p>
+            <p>(Mandiant IC Score: 100; Strong APT29 Association)</p>
+        </div>
+
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: Checklist]</span> Key Findings Consolidated</h3>
+            <ul>
+                <li><strong>Direct APT29 Nexus:</strong> The domain sharpledge.com is credibly linked to APT29, a highly capable Russian state-sponsored threat actor, and their STATICNOISE malware. This association alone signifies a high degree of risk.</li>
+                <li><strong>Role in Espionage Campaigns:</strong> Evidence points to its use in phishing campaigns targeting diplomatic and governmental bodies, aligning with APT29's known objectives.</li>
+                <li><strong>Deceptive Characteristics:</strong> The use of WHOIS privacy, dynamic IP infrastructure (10 historical IPs), and a suspicious Subject Alternative Name (<code class="text-highlight-yellow">www.nt-pcstore.com</code>) in its HTTPS certificate are indicative of operational security measures taken by the actor.</li>
+                <li><strong>Active Malicious Indicators:</strong> Despite low direct VirusTotal detection on the domain itself, associated files are flagged as malicious, and the `login.php` URL patterns strongly suggest phishing activity.</li>
+                <li><strong>Longevity and Evasion:</strong> Registered in 2019, the domain has maintained a degree of persistence, likely evading widespread detection due to targeted use and obfuscation techniques.</li>
+            </ul>
+        </div>
+
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: ShieldGears]</span> Recommendations</h3>
+            <ul>
+                <li><strong>Block & Monitor:</strong> Immediately block access to `sharpledge.com` and all its associated subdomains at network gateways and endpoint security solutions. Monitor for any historical or ongoing communication attempts.</li>
+                <li><strong>IP Address Blocking:</strong> Review and consider blocking the last known and historical IP addresses associated with `sharpledge.com`, understanding that threat actors frequently rotate infrastructure.
+                    (Latest IPs from historical list were: 34.133.73.143, 162.254.32.222, 66.42.116.212 etc. - prioritize recent resolutions if available).</li>
+                <li><strong>Hunt for Associated Hashes:</strong> Scan systems for the presence of the communicating and downloaded file hashes:
+                    <ul class="monospace-list" style="list-style-type: circle; margin-top: 5px;">
+                        <li>`b84d6a12bb1756b69791e725b0e3d7a962888b31a8188de225805717c299c086`</li>
+                        <li>`ece45b0ed87b6e956022a5e20582701b7f22c699d89c44144adde252515b0a66`</li>
+                        <li>`6dc9c7fc93bb488bb0520a6c780a8d3c0fb5486a4711aca49b4c53fac7393023`</li>
+                        <li>`32f2fa940d4b4fe19aca1e53a24e5aac29c57b7c5ee78588325b87f1b649c864`</li>
+                    </ul>
+                </li>
+                <li><strong>Review Phishing Logs:</strong> Investigate email security logs for phishing attempts potentially originating from or directing users to `sharpledge.com` or associated infrastructure, especially within diplomatic or governmental contexts.</li>
+                <li><strong>Threat Intelligence Updates:</strong> Incorporate these IOCs into existing threat intelligence platforms and security tools. Stay updated on APT29 TTPs.</li>
+            </ul>
+        </div>
+        <p style="margin-top:20px; font-size:0.9em;"><strong>Conclusion:</strong> sharpledge.com is a high-risk domain actively involved in sophisticated cyber espionage operations attributed to APT29. Its primary function appears to be phishing and potentially C2 communications. Proactive defensive measures are crucial to mitigate the threat posed by this indicator and its associated actor infrastructure.</p>
+        <div class="page-footer">8 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+     <!-- Page 9: Sourcing Statement -->
+    <div class="page-container">
+        <h2 class="section-title">Sourcing Statement</h2>
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: BookScroll]</span> Tradecraft</h3>
+            <p>Global Cyber Threat Analysts (GCTA) applies rigorous analytic standards, inspired by established intelligence community directives, to its threat research and reporting. This includes combating cognitive biases, employing structured analytic techniques (e.g., alternative hypothesis testing), and ensuring transparent sourcing where possible.</p>
+        </div>
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: GearsProcess]</span> Methodology</h3>
+            <p>Risk ratings and assessments within this report are derived from a combination of factors. For specific IOCs like `sharpledge.com`, this includes:
+                <ul>
+                    <li><strong>Attribution Strength:</strong> Confidence in the linkage to known threat actors (e.g., APT29).</li>
+                    <li><strong>Observed Malicious Activity:</strong> Nature and volume of malicious behaviors associated with the IOC (e.g., phishing, C2, malware distribution).</li>
+                    <li><strong>Technical Indicators:</strong> Analysis of WHOIS data, SSL certificates, DNS history, and associated file/URL intelligence.</li>
+                    <li><strong>Corroboration:</strong> Cross-referencing findings with multiple proprietary, open-source, and partner intelligence feeds.</li>
+                    <li><strong>Contextual Relevance:</strong> Understanding the IOC's role within broader campaigns and actor TTPs.</li>
+                </ul>
+                The Mandiant IC Score is a direct input from their platform. VirusTotal data reflects community and vendor detections.
+            </p>
+        </div>
+        <div class="content-box">
+            <h3 class="box-title"><span class="icon-placeholder">[ICON: DBNetwork]</span> Collection</h3>
+            <p>GCTA leverages a diverse array of information sources to compile its analysis. This includes:
+                <ul>
+                    <li>Proprietary data and telemetry.</li>
+                    <li>Subscriptions to leading commercial threat intelligence feeds and platforms.</li>
+                    <li>Open-source intelligence (OSINT) including security blogs, academic research, malware repositories, and public sandbox analysis.</li>
+                    <li>Information sharing agreements with trusted partners and communities.</li>
+                    <li>Analysis of underground forums and dark web marketplaces (where applicable and ethically sourced).</li>
+                </ul>
+            This multi-source approach enables comprehensive coverage and robust validation of findings presented in reports like this Deep IOC Analysis.
+            </p>
+        </div>
+        <div class="page-footer">9 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+    <!-- Page 10: Disclaimer -->
+    <div class="page-container disclaimer-page">
+        <div class="logo-placeholder">GCTA</div>
+        <div style="font-size:0.95em;">
+            <p>This report contains general information only and Global Cyber Threat Analysts (GCTA) is not, by means of this report, rendering professional advice or services. This report is not a substitute for such professional advice or services, nor should it be used as a basis for any decision or action that may affect your business or security posture. Before making any decision or taking any action that may affect your business or security, you should consult a qualified professional advisor.</p>
+            <br>
+            <p>GCTA shall not be responsible for any loss sustained by any person who relies on this report. The information contained herein is based on sources and methodologies believed to be reliable. However, GCTA does not guarantee its accuracy, completeness, or timeliness. The cyber threat landscape is constantly evolving, and past observations may not be indicative of future activity.</p>
+            <br>
+            <p>All trademarks, service marks, trade names, trade dress, product names and logos appearing in this report are the property of their respective owners. Any rights not expressly granted herein are reserved.</p>
+            <br>
+            <p>As used in this document, "GCTA" refers to Global Cyber Threat Analysts and its affiliated entities where applicable.</p>
+        </div>
+        <div class="page-footer">10 | Copyright © 2025 Global Cyber Threat Analysts (GCTA). All rights reserved.</div>
+    </div>
+
+</body>
+</html>
